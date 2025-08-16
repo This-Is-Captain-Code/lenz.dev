@@ -37,7 +37,7 @@
   --sidebar-ring: hsl(248.4, 83.5%, 57.3%);
   --surface: hsl(0, 0%, 10.2%);
   --surface-light: hsl(0, 0%, 16.5%);
-  --font-sans: Inter, system-ui, sans-serif;
+  --font-sans: "Inter Display", system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 1.3rem;
@@ -88,7 +88,7 @@
   --sidebar-ring: hsl(248.4, 83.5%, 57.3%);
   --surface: hsl(0, 0%, 10.2%);
   --surface-light: hsl(0, 0%, 16.5%);
-  --font-sans: Inter, system-ui, sans-serif;
+  --font-sans: "Inter Display", system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 1.3rem;

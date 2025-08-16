@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Lens, User } from '@shared/schema';
 import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, ArrowClockwise, Sparkle, Download, Info, X, CaretUp } from '@phosphor-icons/react';
+import { Camera, Question, User as UserIcon, X, Download } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,8 @@ export function SnapCameraView({
 }: SnapCameraViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const leftSelectorRef = useRef<HTMLDivElement>(null);
+  const rightSelectorRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
@@ -28,14 +30,12 @@ export function SnapCameraView({
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const [currentLensIndex, setCurrentLensIndex] = useState(0);
-  const [showControls, setShowControls] = useState(true);
-  const [showLensInfo, setShowLensInfo] = useState(false);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
   
-  // Animation states
-  const [swipeDirection, setSwipeDirection] = useState<'up' | 'down' | null>(null);
-  const [swipeProgress, setSwipeProgress] = useState(0);
+  // Lens selector state - showing 4 lenses at a time
+  const [visibleLensStartIndex, setVisibleLensStartIndex] = useState(0);
   
   // Fetch lenses
   const { data: allLenses = [], isLoading: isLoadingLenses } = useQuery<Lens[]>({
@@ -129,79 +129,63 @@ export function SnapCameraView({
     }
   }, [currentLens, isCameraReady, toast]);
   
-  // Setup gesture handling for swipe and touch interactions
+  // Setup gesture handling for lens selector areas
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const leftSelector = leftSelectorRef.current;
+    const rightSelector = rightSelectorRef.current;
     
-    let startY = 0;
-    let isDragging = false;
+    if (!leftSelector || !rightSelector) return;
     
-    const handleTouchStart = (e: TouchEvent) => {
-      startY = e.touches[0].clientY;
-      isDragging = true;
-      setSwipeProgress(0);
+    const handleLeftSwipe = (e: TouchEvent) => {
+      e.preventDefault();
+      cycleToPreviousLens();
     };
     
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging) return;
-      
-      const currentY = e.touches[0].clientY;
-      const deltaY = currentY - startY;
-      const progress = Math.min(Math.abs(deltaY) / 200, 1);
-      
-      setSwipeProgress(progress);
-      setSwipeDirection(deltaY > 0 ? 'down' : 'up');
+    const handleRightSwipe = (e: TouchEvent) => {
+      e.preventDefault();
+      cycleToNextLens();
     };
     
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (!isDragging) return;
-      
-      const currentY = e.changedTouches[0].clientY;
-      const deltaY = currentY - startY;
-      
-      if (Math.abs(deltaY) > 60) {
-        if (deltaY < 0 && currentLensIndex < lenses.length - 1) {
-          // Swipe up - next lens
-          setCurrentLensIndex(current => (current + 1) % lenses.length);
-        } else if (deltaY > 0 && currentLensIndex > 0) {
-          // Swipe down - previous lens
-          setCurrentLensIndex(current => (current - 1 + lenses.length) % lenses.length);
-        }
-      }
-      
-      isDragging = false;
-      setSwipeProgress(0);
-      setSwipeDirection(null);
-    };
-    
-    const handleTap = (e: MouseEvent) => {
-      // Toggle controls on tap, only if not clicking a button
-      if ((e.target as HTMLElement).tagName !== 'BUTTON') {
-        setShowControls(prev => !prev);
-        setShowLensInfo(false);
-      }
-    };
-    
-    container.addEventListener('touchstart', handleTouchStart);
-    container.addEventListener('touchmove', handleTouchMove);
-    container.addEventListener('touchend', handleTouchEnd);
-    container.addEventListener('click', handleTap);
+    leftSelector.addEventListener('touchstart', handleLeftSwipe);
+    rightSelector.addEventListener('touchstart', handleRightSwipe);
     
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-      container.removeEventListener('click', handleTap);
+      leftSelector.removeEventListener('touchstart', handleLeftSwipe);
+      rightSelector.removeEventListener('touchstart', handleRightSwipe);
     };
   }, [currentLensIndex, lenses.length]);
   
-  // Handle camera flip
-  const toggleCameraFacing = () => {
-    if (mediaStream) {
-      mediaStream.getTracks().forEach(track => track.stop());
+  // Cycle to next lens
+  const cycleToNextLens = () => {
+    if (lenses.length === 0) return;
+    setCurrentLensIndex(current => (current + 1) % lenses.length);
+    
+    // Update visible lens window if needed
+    const nextIndex = (currentLensIndex + 1) % lenses.length;
+    if (nextIndex >= visibleLensStartIndex + 4) {
+      setVisibleLensStartIndex(current => Math.min(current + 1, lenses.length - 4));
+    } else if (nextIndex < visibleLensStartIndex) {
+      setVisibleLensStartIndex(0);
     }
-    setFacingMode(current => (current === 'user' ? 'environment' : 'user'));
+  };
+  
+  // Cycle to previous lens
+  const cycleToPreviousLens = () => {
+    if (lenses.length === 0) return;
+    setCurrentLensIndex(current => (current - 1 + lenses.length) % lenses.length);
+    
+    // Update visible lens window if needed
+    const prevIndex = (currentLensIndex - 1 + lenses.length) % lenses.length;
+    if (prevIndex < visibleLensStartIndex) {
+      setVisibleLensStartIndex(current => Math.max(current - 1, 0));
+    } else if (prevIndex >= visibleLensStartIndex + 4) {
+      setVisibleLensStartIndex(Math.max(0, lenses.length - 4));
+    }
+  };
+  
+  // Handle help toggle
+  const toggleHelp = () => {
+    setShowHelp(prev => !prev);
   };
   
   // Capture photo
@@ -235,136 +219,156 @@ export function SnapCameraView({
     setCapturedPhoto(null);
   };
   
-  // Handle lens info toggle
-  const toggleLensInfo = () => {
-    setShowLensInfo(prev => !prev);
+  // Get visible lenses for the selector (4 at a time)
+  const getVisibleLenses = () => {
+    if (lenses.length <= 4) return lenses;
+    return lenses.slice(visibleLensStartIndex, visibleLensStartIndex + 4);
   };
   
-  // Render lens indicator dots
-  const renderLensIndicators = () => {
+  // Render top bar with profile, filter name, and help icon
+  const renderTopBar = () => {
     return (
-      <div className="absolute top-4 right-4 flex flex-col items-center space-y-1">
-        {lenses.map((_, index) => (
-          <div 
-            key={index} 
-            className={`w-2 h-2 rounded-full ${
-              index === currentLensIndex 
-                ? 'bg-primary' 
-                : 'bg-white/50'
-            }`}
-          />
-        ))}
+      <div className="absolute top-0 inset-x-0 z-10 flex items-center justify-between p-4 pt-12 bg-gradient-to-b from-black/30 to-transparent">
+        {/* Profile Icon - Top Left */}
+        <Button 
+          size="icon" 
+          className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
+          onClick={onOpenSidebar}
+          data-testid="button-profile"
+        >
+          <UserIcon className="h-6 w-6" />
+        </Button>
+        
+        {/* Filter Name - Top Center */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div className="bg-black/40 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+            <span className="text-white font-medium text-sm" data-testid="text-current-filter">
+              {currentLens?.name || 'No Filter'}
+            </span>
+          </div>
+        </div>
+        
+        {/* Help Icon - Top Right */}
+        <Button 
+          size="icon" 
+          className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
+          onClick={toggleHelp}
+          data-testid="button-help"
+        >
+          <Question className="h-6 w-6" />
+        </Button>
       </div>
     );
   };
   
-  // Render bottom controls
+  // Render bottom section with lens selectors and capture button
   const renderBottomControls = () => {
+    const visibleLenses = getVisibleLenses();
+    
     return (
-      <div className="absolute bottom-8 inset-x-0 flex justify-center">
-        <div className="flex items-center space-x-6">
-          <Button 
-            size="icon" 
-            className="h-12 w-12 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
-            onClick={toggleLensInfo}
-            data-testid="button-lens-info"
+      <div className="absolute bottom-0 inset-x-0 z-10 flex items-center justify-center pb-8 bg-gradient-to-t from-black/30 to-transparent">
+        <div className="flex items-center justify-center w-full max-w-md">
+          {/* Left lens selector area */}
+          <div 
+            ref={leftSelectorRef}
+            className="flex-1 flex items-center justify-center py-4 touch-manipulation"
+            data-testid="area-left-lens-selector"
           >
-            <Info className="h-6 w-6" />
-          </Button>
+            <div className="flex space-x-2">
+              {visibleLenses.slice(0, 2).map((lens, index) => {
+                const actualIndex = visibleLensStartIndex + index;
+                const isSelected = actualIndex === currentLensIndex;
+                return (
+                  <Button
+                    key={lens.id}
+                    size="icon"
+                    className={`h-12 w-12 rounded-full text-sm font-bold transition-all ${
+                      isSelected 
+                        ? 'bg-white text-black scale-110' 
+                        : 'bg-white/20 text-white border border-white/40'
+                    }`}
+                    onClick={() => setCurrentLensIndex(actualIndex)}
+                    data-testid={`button-lens-${actualIndex + 1}`}
+                  >
+                    {actualIndex + 1}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
           
-          <Button 
-            size="icon" 
-            className="h-16 w-16 rounded-full bg-white text-primary"
-            onClick={capturePhoto}
-            data-testid="button-capture"
-          >
-            <Camera className="h-8 w-8" />
-          </Button>
+          {/* Center capture button */}
+          <div className="flex-none px-6">
+            <Button 
+              size="icon" 
+              className="h-20 w-20 rounded-full bg-white text-black hover:bg-white/90 border-4 border-white/40 transition-transform active:scale-95"
+              onClick={capturePhoto}
+              data-testid="button-capture"
+            >
+              <Camera className="h-10 w-10" />
+            </Button>
+          </div>
           
-          <Button 
-            size="icon" 
-            className="h-12 w-12 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
-            onClick={toggleCameraFacing}
-            data-testid="button-camera-flip"
+          {/* Right lens selector area */}
+          <div 
+            ref={rightSelectorRef}
+            className="flex-1 flex items-center justify-center py-4 touch-manipulation"
+            data-testid="area-right-lens-selector"
           >
-            <ArrowClockwise className="h-6 w-6" />
-          </Button>
+            <div className="flex space-x-2">
+              {visibleLenses.slice(2, 4).map((lens, index) => {
+                const actualIndex = visibleLensStartIndex + index + 2;
+                const isSelected = actualIndex === currentLensIndex;
+                return (
+                  <Button
+                    key={lens.id}
+                    size="icon"
+                    className={`h-12 w-12 rounded-full text-sm font-bold transition-all ${
+                      isSelected 
+                        ? 'bg-white text-black scale-110' 
+                        : 'bg-white/20 text-white border border-white/40'
+                    }`}
+                    onClick={() => setCurrentLensIndex(actualIndex)}
+                    data-testid={`button-lens-${actualIndex + 1}`}
+                  >
+                    {actualIndex + 1}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     );
   };
   
-  // Swipe indicators
-  const renderSwipeIndicators = () => {
-    return (
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
-        <AnimatePresence>
-          {swipeDirection === 'up' && (
-            <motion.div
-              initial={{ opacity: 0, y: 0 }}
-              animate={{ opacity: swipeProgress, y: -20 * swipeProgress }}
-              exit={{ opacity: 0 }}
-              className="absolute text-white text-sm font-medium"
-            >
-              <CaretUp className="h-8 w-8 mx-auto" />
-              <div>Next lens</div>
-            </motion.div>
-          )}
-          
-          {swipeDirection === 'down' && (
-            <motion.div
-              initial={{ opacity: 0, y: 0 }}
-              animate={{ opacity: swipeProgress, y: 20 * swipeProgress }}
-              exit={{ opacity: 0 }}
-              className="absolute text-white text-sm font-medium rotate-180"
-            >
-              <CaretUp className="h-8 w-8 mx-auto" />
-              <div className="rotate-180">Previous lens</div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    );
-  };
-  
-  // Render the lens info overlay
-  const renderLensInfo = () => {
-    if (!currentLens || !showLensInfo) return null;
+  // Render help overlay
+  const renderHelpOverlay = () => {
+    if (!showHelp) return null;
     
     return (
       <motion.div 
-        className="absolute inset-0 bg-black/60 flex flex-col justify-end p-6 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex items-center justify-center p-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        onClick={() => setShowHelp(false)}
       >
-        <div className="bg-background/90 rounded-xl p-4 max-w-full">
-          <div className="flex justify-between items-start mb-2">
-            <h2 className="text-lg font-bold" data-testid="text-lens-name">{currentLens.name}</h2>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6" 
-              onClick={() => setShowLensInfo(false)}
-              data-testid="button-close-lens-info"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+        <div className="bg-white rounded-2xl p-6 max-w-sm text-center" onClick={(e) => e.stopPropagation()}>
+          <h3 className="text-lg font-bold mb-4">How to Use</h3>
+          <div className="space-y-3 text-sm text-gray-600">
+            <p>• Tap lens numbers to switch between effects</p>
+            <p>• Swipe left/right areas to cycle through all lenses</p>
+            <p>• Tap the big white button to capture photos</p>
+            <p>• Use the profile icon to access settings</p>
           </div>
-          
-          <p className="text-sm text-muted-foreground mb-3" data-testid="text-lens-description">
-            {currentLens.description || 'No description available.'}
-          </p>
-          
-          <div className="flex justify-between text-sm">
-            <div>
-              <span className="font-medium">Creator:</span> <span data-testid="text-lens-creator">{currentLens.creator}</span>
-            </div>
-            <div>
-              <Download className="inline-block h-4 w-4 mr-1" />
-              <span data-testid="text-lens-downloads">{currentLens.downloads || 0}</span>
-            </div>
-          </div>
+          <Button 
+            className="mt-6 w-full rounded-full"
+            onClick={() => setShowHelp(false)}
+            data-testid="button-close-help"
+          >
+            Got it!
+          </Button>
         </div>
       </motion.div>
     );
@@ -412,7 +416,7 @@ export function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative h-full w-full overflow-hidden bg-black flex items-center justify-center"
+      className="relative h-full w-full overflow-hidden bg-black flex items-center justify-center font-['Inter_Display',_system-ui,_sans-serif]"
     >
       {/* Canvas for the camera view */}
       <canvas 
@@ -425,59 +429,28 @@ export function SnapCameraView({
       
       {/* Loading state */}
       {(!isCameraReady || isLoadingLenses) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black">
+        <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
           <div className="flex flex-col items-center">
-            <div className="h-12 w-12 rounded-full border-4 border-t-transparent border-primary animate-spin mb-4"></div>
-            <p className="text-white" data-testid="text-loading">Loading camera...</p>
+            <div className="h-12 w-12 rounded-full border-4 border-t-transparent border-white animate-spin mb-4"></div>
+            <p className="text-white font-medium" data-testid="text-loading">Loading camera...</p>
           </div>
         </div>
       )}
       
-      {/* UI Controls */}
-      <AnimatePresence>
-        {showControls && isCameraReady && !capturedPhoto && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 pointer-events-none"
-          >
-            {/* Top bar - Lens info */}
-            <div className="absolute top-0 inset-x-0 p-4 flex justify-between items-start pointer-events-auto">
-              <Button 
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 rounded-full bg-black/20 text-white hover:bg-black/40"
-                onClick={onOpenSidebar}
-                data-testid="button-open-sidebar"
-              >
-                <Sparkle className="h-5 w-5" />
-              </Button>
-              
-              {currentLens && (
-                <div className="rounded-full bg-black/20 text-white px-3 py-1 text-sm backdrop-blur-sm" data-testid="text-current-lens">
-                  {currentLens.name}
-                </div>
-              )}
-            </div>
-            
-            {/* Lens indicators */}
-            {renderLensIndicators()}
-            
-            {/* Bottom controls */}
-            <div className="pointer-events-auto">
-              {renderBottomControls()}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* New Snapchat-like UI */}
+      {isCameraReady && !capturedPhoto && (
+        <>
+          {/* Top bar with profile, filter name, and help */}
+          {renderTopBar()}
+          
+          {/* Bottom controls with lens selectors and capture button */}
+          {renderBottomControls()}
+        </>
+      )}
       
-      {/* Swipe indicators */}
-      {renderSwipeIndicators()}
-      
-      {/* Lens info overlay */}
+      {/* Help overlay */}
       <AnimatePresence>
-        {showLensInfo && renderLensInfo()}
+        {renderHelpOverlay()}
       </AnimatePresence>
       
       {/* Captured photo view */}
