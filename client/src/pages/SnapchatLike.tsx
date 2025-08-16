@@ -87,7 +87,7 @@ export default function SnapchatLike() {
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onSelectLens={handleSelectLens}
-        user={user}
+        user={user || null}
         onLogin={handleLogin}
         onLogout={handleLogout}
       />

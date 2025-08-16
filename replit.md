@@ -66,7 +66,7 @@ RESTful endpoints following standard conventions:
 - **@radix-ui/***: Comprehensive set of accessible UI components (dialogs, buttons, forms, etc.)
 - **tailwindcss**: Utility-first CSS framework with custom design tokens
 - **class-variance-authority**: Type-safe variant handling for component styling
-- **lucide-react**: Icon library for consistent iconography
+- **@phosphor-icons/react**: Primary icon library for consistent iconography (required throughout the interface)
 
 ## State & Data Management
 - **@tanstack/react-query**: Server state management with caching and synchronization

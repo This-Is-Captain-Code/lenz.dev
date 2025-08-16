@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Lens, User } from '@shared/schema';
-import { X, Search, Check } from 'lucide-react';
+import { X, MagnifyingGlass, Check } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -108,7 +108,7 @@ export function SnapSidebar({
                 
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <MagnifyingGlass className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
                     type="text" 
                     placeholder="Search lenses..."

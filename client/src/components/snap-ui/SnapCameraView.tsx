@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Lens, User } from '@shared/schema';
 import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Repeat, Sparkles, Download, Info, X, ChevronUp } from 'lucide-react';
+import { Camera, ArrowClockwise, Sparkle, Download, Info, X, CaretUp } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -287,7 +287,7 @@ export function SnapCameraView({
             onClick={toggleCameraFacing}
             data-testid="button-camera-flip"
           >
-            <Repeat className="h-6 w-6" />
+            <ArrowClockwise className="h-6 w-6" />
           </Button>
         </div>
       </div>
@@ -306,7 +306,7 @@ export function SnapCameraView({
               exit={{ opacity: 0 }}
               className="absolute text-white text-sm font-medium"
             >
-              <ChevronUp className="h-8 w-8 mx-auto" />
+              <CaretUp className="h-8 w-8 mx-auto" />
               <div>Next lens</div>
             </motion.div>
           )}
@@ -318,7 +318,7 @@ export function SnapCameraView({
               exit={{ opacity: 0 }}
               className="absolute text-white text-sm font-medium rotate-180"
             >
-              <ChevronUp className="h-8 w-8 mx-auto" />
+              <CaretUp className="h-8 w-8 mx-auto" />
               <div className="rotate-180">Previous lens</div>
             </motion.div>
           )}
@@ -451,7 +451,7 @@ export function SnapCameraView({
                 onClick={onOpenSidebar}
                 data-testid="button-open-sidebar"
               >
-                <Sparkles className="h-5 w-5" />
+                <Sparkle className="h-5 w-5" />
               </Button>
               
               {currentLens && (
