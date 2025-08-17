@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { QueryProvider } from '../components/query-provider';
 import { Toaster } from '../components/ui/toaster';
+import { MiniKitContextProvider } from '../providers/MiniKitProvider';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
-        <QueryProvider>
-          {children}
-          <Toaster />
-        </QueryProvider>
+        <MiniKitContextProvider>
+          <QueryProvider>
+            {children}
+            <Toaster />
+          </QueryProvider>
+        </MiniKitContextProvider>
       </body>
     </html>
   );

@@ -2,7 +2,13 @@
 
 This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
 
-## Recent Changes (January 17, 2025)
+## Recent Changes (August 17, 2025)
+- **WEB3 INTEGRATION**: Added MiniKit (OnchainKit) for Web3 functionality
+  - Installed @coinbase/onchainkit package for Farcaster and blockchain integration
+  - Created MiniKitProvider wrapper for Web3 wallet connectivity
+  - Integrated useMiniKit hook for frame initialization
+  - Added support for NFT minting, crypto transactions, and Farcaster social features
+  - Configured Base chain integration for optimal Web3 performance
 - **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
   - Removed all Express server dependencies and files (server/ directory)
   - Migrated all Express API routes to Next.js API routes (app/api/)
@@ -90,6 +96,7 @@ RESTful endpoints following standard conventions:
 
 ## Core Dependencies
 - **@snap/camera-kit**: Snapchat's official SDK for AR lens integration and camera functionality
+- **@coinbase/onchainkit**: MiniKit framework for Web3 integration, Farcaster connectivity, and blockchain features
 - **@neondatabase/serverless**: PostgreSQL driver optimized for serverless environments
 - **drizzle-orm**: Type-safe ORM for database operations with PostgreSQL support
 
@@ -111,8 +118,15 @@ RESTful endpoints following standard conventions:
 - **wouter**: Lightweight routing library for React
 - **framer-motion**: Animation library for smooth UI transitions (used in camera interface)
 
-## Snap Platform Integration
-The application requires valid Snap Camera Kit API credentials:
+## Platform Integration
+The application requires API credentials for both Snap and Coinbase platforms:
+
+### Snap Camera Kit
 - **SNAP_API_TOKEN**: Authentication token for Snap Camera Kit
 - **SNAP_GROUP_ID**: Group identifier for lens organization
 - Specific lens IDs for individual AR effects
+
+### Coinbase MiniKit (Web3)
+- **NEXT_PUBLIC_CDP_CLIENT_API_KEY**: Coinbase Developer Platform API key for Web3 functionality
+- Enables Farcaster connectivity, NFT minting, and blockchain transactions
+- Configured for Base chain integration

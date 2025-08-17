@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { User, Lens } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +12,14 @@ import { SnapSidebar } from '../components/snap-ui/SnapSidebar';
 export default function HomePage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { setFrameReady, isFrameReady } = useMiniKit();
+
+  // Initialize MiniKit when app is ready
+  useEffect(() => {
+    if (!isFrameReady) {
+      setFrameReady();
+    }
+  }, [isFrameReady, setFrameReady]);
   
   // State
   const [sidebarOpen, setSidebarOpen] = useState(false);
