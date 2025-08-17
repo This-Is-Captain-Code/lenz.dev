@@ -445,12 +445,13 @@ export default function SnapCameraView({
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
-      {/* Camera Canvas - Full Screen */}
+      {/* Camera Canvas - Moved Up */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+        className="absolute w-full h-full"
         style={{ 
-          objectFit: 'contain'
+          objectFit: 'contain',
+          top: '-20px'
         }}
       />
 
@@ -489,7 +490,7 @@ export default function SnapCameraView({
       </div>
       
       {/* Bottom Controls - Lens Selector */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
+      <div className="absolute left-0 right-0 z-10 p-6" style={{ bottom: '20px' }}>
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-4">
             {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
