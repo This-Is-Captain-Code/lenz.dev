@@ -3,7 +3,12 @@
 This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
 
 ## Recent Changes (January 17, 2025)
-- Successfully migrated from Express+Vite to Next.js App Router while maintaining full camera functionality
+- **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
+  - Removed all Express server dependencies and files (server/ directory)
+  - Migrated all Express API routes to Next.js API routes (app/api/)
+  - Updated storage layer to work with Next.js serverless functions
+  - Fixed deployment issues by eliminating Express import errors
+  - Preserved all camera functionality and UI design during migration
 - Fixed lens application issues by using correct Camera Kit API (`loadLens` instead of `getLens`)
 - Restored original Snapchat-like UI design with:
   - Profile icon (top left), lens name (top center), help icon (top right)
@@ -39,10 +44,10 @@ Preferred communication style: Simple, everyday language.
 - **Build Tool**: Next.js with built-in optimizations and server-side rendering
 
 ## Backend Architecture
-- **Runtime**: Next.js API Routes for serverless backend functionality
+- **Runtime**: Pure Next.js API Routes for serverless backend functionality (no Express)
 - **Language**: TypeScript for full-stack type safety
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Data Storage**: In-memory storage with fallback to database for development flexibility
+- **Data Storage**: In-memory storage located in `lib/storage.ts` for development
 - **Session Management**: Next.js session handling for user authentication state
 
 ## Database Design
@@ -53,7 +58,7 @@ The schema includes three main entities:
 
 ## Authentication & Authorization
 - Simple username/password authentication without external providers
-- Session-based authentication using Express sessions
+- Session-based authentication using Next.js built-in session handling
 - Basic user state management for lens access control
 
 ## Camera Kit Integration
@@ -71,8 +76,9 @@ RESTful endpoints following standard conventions:
 - User authentication endpoints for login/logout
 
 ## Development Setup
-- Hot reloading in development with Vite middleware
+- Hot reloading in development with Next.js built-in dev server
 - TypeScript compilation with path mapping for clean imports
+- Pure Next.js architecture without Express dependencies
 - Environment-based configuration for API tokens and database connections
 - Replit-specific optimizations for cloud development environment
 
