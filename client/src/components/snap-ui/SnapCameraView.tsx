@@ -372,22 +372,9 @@ export function SnapCameraView({
                     </div>
                   </Button>
                   
-                  {/* Lens name below selected lens */}
-                  {isSelected && (
-                    <div className="mt-2 text-white text-xs font-medium text-center opacity-80">
-                      {lens.name}
-                    </div>
-                  )}
                 </div>
               );
             })}
-          </div>
-        </div>
-        
-        {/* Swipe indicator hint */}
-        <div className="flex justify-center mt-4">
-          <div className="text-white/50 text-xs font-medium">
-            ← swipe to change lens →
           </div>
         </div>
       </div>
