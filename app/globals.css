@@ -3,6 +3,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Safe area support for mobile devices */
+.pt-safe {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+.pb-safe {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+.pl-safe {
+  padding-left: max(1rem, env(safe-area-inset-left));
+}
+
+.pr-safe {
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.mr-safe {
+  margin-right: max(1rem, env(safe-area-inset-right));
+}
+
 :root {
   --font-inter: 'Inter', sans-serif;
   --background: 0 0% 100%;

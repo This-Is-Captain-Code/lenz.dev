@@ -295,9 +295,9 @@ export default function SnapCameraView({
   // Captured photo view
   if (capturedPhoto) {
     return (
-      <div className="relative w-full h-screen bg-black flex flex-col">
+      <div className="relative w-full h-[100dvh] bg-black flex flex-col overflow-hidden">
         {/* Top Bar - Matching Home Screen */}
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 pt-safe z-20">
           {/* Profile Icon */}
           <Button
             variant="ghost"
@@ -481,22 +481,21 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-screen bg-black overflow-hidden"
+      className="relative w-full h-[100dvh] bg-black overflow-hidden"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
-      {/* Camera Canvas - Moved Up */}
+      {/* Camera Canvas */}
       <canvas
         ref={canvasRef}
-        className="absolute w-full h-full"
+        className="absolute inset-0 w-full h-full"
         style={{ 
-          objectFit: 'contain',
-          top: '-20px'
+          objectFit: 'cover'
         }}
       />
 
       {/* Top Section - Overlay */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-transparent">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 pt-safe z-20 bg-transparent">
         {/* Profile Icon */}
         <Button
           variant="ghost"
@@ -530,7 +529,7 @@ export default function SnapCameraView({
       </div>
       
       {/* Bottom Controls - Lens Selector */}
-      <div className="absolute left-0 right-0 z-10 p-6" style={{ bottom: '20px' }}>
+      <div className="absolute left-0 right-0 bottom-0 z-10 p-6 pb-safe">
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-4">
             {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
@@ -597,7 +596,7 @@ export default function SnapCameraView({
       </AnimatePresence>
       
       {/* Camera Flip Button */}
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20">
+      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 mr-safe">
         <Button
           variant="ghost"
           size="icon"
