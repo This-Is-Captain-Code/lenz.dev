@@ -284,7 +284,8 @@ export default function SnapCameraView({
       result.push({
         lens: lenses[index],
         offset: i,
-        index: index
+        index: index,
+        uniqueKey: `${lenses[index]?.id || 'empty'}-${i}-${index}` // Unique key for React
       });
     }
     
@@ -546,9 +547,9 @@ export default function SnapCameraView({
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-4">
-            {getVisibleLenses().map(({ lens, offset, index }) => (
+            {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
               <motion.div
-                key={lens?.id ? `lens-${lens.id}` : `placeholder-${index}`}
+                key={uniqueKey}
                 className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
                 animate={{
                   scale: offset === 0 ? 1.2 : 0.8,

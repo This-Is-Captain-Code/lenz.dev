@@ -100,7 +100,7 @@ export function SnapSidebar({
               <div className="space-y-3">
                 {lenses.map((lens) => (
                   <motion.div
-                    key={lens.id}
+                    key={`sidebar-lens-${lens.id}`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="p-4 rounded-lg bg-gray-800 hover:bg-gray-700 cursor-pointer transition-colors"

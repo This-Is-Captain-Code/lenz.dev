@@ -123,6 +123,18 @@ export const applyLensToCanvas = async (
       hasCameraKit: !!cameraKit,
       hasSession: !!session
     });
+    
+    // If permission denied, try to clear the lens to continue functioning
+    if (error instanceof Error && error.message.includes('permission denied')) {
+      console.log('Permission denied - clearing lens to continue');
+      try {
+        await session.clearLens();
+        console.log('Lens cleared successfully');
+      } catch (clearError) {
+        console.error('Failed to clear lens:', clearError);
+      }
+    }
+    
     throw error;
   }
 };
