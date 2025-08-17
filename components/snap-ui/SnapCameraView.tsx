@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Lens, User } from '@shared/schema';
-import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
-import { useToast } from '@/hooks/use-toast';
+import { Lens, User } from '../../shared/schema';
+import { applyLensToCanvas, captureCanvas, initializeCamera } from '../../lib/cameraKitService';
+import { useToast } from '../../hooks/use-toast';
 import { 
   Camera, 
   Question, 
@@ -16,8 +16,8 @@ import {
   RedditLogo,
   ArrowLeft
 } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { useLocation } from 'wouter';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SnapCameraViewProps {
@@ -33,7 +33,7 @@ export function SnapCameraView({
 }: SnapCameraViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [, navigate] = useLocation();
+  const router = useRouter();
   const { toast } = useToast();
   
   // State
@@ -711,3 +711,5 @@ export function SnapCameraView({
     </div>
   );
 }
+
+export default SnapCameraView;

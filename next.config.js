@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@snap/camera-kit']
-  },
+  serverExternalPackages: ['@snap/camera-kit'],
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

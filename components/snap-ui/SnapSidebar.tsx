@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Lens, User } from '@shared/schema';
 import { X, MagnifyingGlass, Check } from '@phosphor-icons/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SnapSidebarProps {
