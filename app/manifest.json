@@ -1,0 +1,23 @@
+{
+  "name": "LenZ Camera",
+  "description": "Create amazing AR photos with Snapchat Camera Kit lenses and mint them as NFTs",
+  "version": "1.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#8B5CF6",
+  "icons": [
+    {
+      "src": "/LenZ-white-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "minikit": {
+    "url": "https://your-app.replit.app",
+    "projectName": "LenZ Camera",
+    "category": "social",
+    "tagline": "AR Camera with NFT Minting",
+    "description": "Create stunning AR photos using Snapchat lenses and mint them as NFTs on Base"
+  }
+}

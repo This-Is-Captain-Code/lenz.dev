@@ -11,6 +11,12 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
   - Added Farcaster share button using useComposeCast hook
   - Both features copy captured photos to clipboard for easy sharing
   - Configured Base chain integration for optimal Web3 performance
+- **MINIKIT ENVIRONMENT SETUP**: Configured required environment variables and manifest
+  - Added comprehensive .env.local with all MiniKit required variables
+  - Created dynamic manifest.json API route (/manifest) for Farcaster app registration
+  - Updated metadata with Open Graph and Twitter card support
+  - Configured proper environment variable fallbacks in MiniKitProvider
+  - Set up placeholder values for Farcaster credentials (HEADER, PAYLOAD, SIGNATURE)
 - **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
   - Removed all Express server dependencies and files (server/ directory)
   - Migrated all Express API routes to Next.js API routes (app/api/)
