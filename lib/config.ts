@@ -2,9 +2,9 @@
  * Configuration for the Camera Kit integration
  */
 
-export const SNAP_API_TOKEN = 'eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzQ0ODA0MTU5LCJzdWIiOiIzYjM3YjZmZi0yMDI4LTQ3OTAtYmE3YS1jZGIyYWQ4OTc0NTF-U1RBR0lOR34wZGIxZWY5ZC1lM2RjLTQ0YjgtYmI1ZS1mZmE2NDYwOTRjMjcifQ.gh5mg-KtZQynKFw4pnBqU2AcrRstbtedDwNtO3beX8k';
-export const SNAP_GROUP_ID = 'b5551368-7881-4a23-a034-a0e757ec85a7';
-export const DEFAULT_LENS_ID = '49a28a50-9294-475b-bdb5-d0b7395109e2';
+export const SNAP_API_TOKEN = 'eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzU1NDE1NTk3LCJzdWIiOiI4OTBkNjZiOC03OTliLTRjNGItOWJjNS1mYWFlNTNkYmJhY2J-U1RBR0lOR35iYmZkMjFmOS0xMGIzLTQxMjItODBkNi0zN2JiOGQyNjUxYjUifQ.cbddVIF2ZSWwXrA2NQVZDUlWdCMLXeDGR2GvvAfjb6s';
+export const SNAP_GROUP_ID = 'cd486701-b5b7-42f3-b809-f4cc276d5e7b';
+export const DEFAULT_LENS_ID = 'c0858ad5-11f4-4ba8-b7b9-edb9b64a2164';
 
 export const config = {
   snap: {
