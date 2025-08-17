@@ -3,7 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { Lens, User } from '@shared/schema';
 import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Question, User as UserIcon, X, Download } from '@phosphor-icons/react';
+import { 
+  Camera, 
+  Question, 
+  User as UserIcon, 
+  X, 
+  Download,
+  XLogo,
+  InstagramLogo,
+  FacebookLogo,
+  LinkedinLogo,
+  RedditLogo,
+  ArrowLeft
+} from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -476,40 +488,131 @@ export function SnapCameraView({
     );
   };
   
-  // Render photo capture view
+  // Render photo capture view with social sharing interface
   const renderCapturedPhotoView = () => {
     if (!capturedPhoto) return null;
     
     return (
-      <div className="absolute inset-0 bg-black flex flex-col">
-        <div className="flex-1 relative">
-          <img 
-            src={capturedPhoto} 
-            alt="Captured photo" 
-            className="absolute inset-0 w-full h-full object-contain"
-            data-testid="img-captured-photo"
-          />
-        </div>
-        
-        <div className="p-6 flex justify-between">
+      <div className="absolute inset-0 bg-black flex flex-col font-['Inter_Display',_system-ui,_sans-serif]">
+        {/* Top bar with profile and help icons - same as camera view */}
+        <div className="absolute top-0 inset-x-0 z-10 flex items-center justify-between p-4 pt-4">
+          {/* Back Button - Top Left */}
           <Button 
-            variant="outline" 
-            className="rounded-full px-4 bg-white/20 text-white border-white/30 hover:bg-white/30 hover:text-white"
+            size="icon" 
+            className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
             onClick={backToCamera}
-            data-testid="button-discard-photo"
+            data-testid="button-back"
           >
-            <X className="mr-2 h-4 w-4" />
-            Discard
+            <ArrowLeft className="h-6 w-6" />
           </Button>
           
+          {/* Help Icon - Top Right */}
           <Button 
-            className="rounded-full px-4"
-            onClick={downloadPhoto}
-            data-testid="button-save-photo"
+            size="icon" 
+            className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
+            onClick={toggleHelp}
+            data-testid="button-help"
           >
-            <Download className="mr-2 h-4 w-4" />
-            Save
+            <Question className="h-6 w-6" />
           </Button>
+        </div>
+
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col items-center justify-center p-6 pt-20 pb-4">
+          {/* Photo frame with borders and overlay text */}
+          <div className="relative max-w-sm w-full">
+            <div className="bg-white rounded-3xl p-3 shadow-2xl">
+              <div className="relative rounded-2xl overflow-hidden bg-black">
+                <img 
+                  src={capturedPhoto} 
+                  alt="Captured photo" 
+                  className="w-full h-auto aspect-[9/16] object-cover"
+                  data-testid="img-captured-photo"
+                />
+                
+                {/* Filter name overlay - top left */}
+                <div className="absolute top-4 left-4">
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                    <span className="text-white font-semibold text-sm">
+                      {currentLens?.name || 'No Filter'}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Creator info overlay - bottom left */}
+                <div className="absolute bottom-4 left-4 flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center mr-2">
+                    <UserIcon className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold text-sm">
+                      {currentLens?.creator || '@unknown'}
+                    </div>
+                    <div className="text-white/70 text-xs">
+                      {currentLens?.downloads || 0} uses
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom share section */}
+        <div className="p-6 pt-0">
+          {/* Share to section */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+            <div className="text-white/70 text-sm font-medium mb-3 uppercase tracking-wider">
+              SHARE TO
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <Button
+                size="icon"
+                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                onClick={() => {/* Handle X share */}}
+                data-testid="button-share-x"
+              >
+                <XLogo className="h-6 w-6" />
+              </Button>
+              
+              <Button
+                size="icon"
+                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                onClick={() => {/* Handle Instagram share */}}
+                data-testid="button-share-instagram"
+              >
+                <InstagramLogo className="h-6 w-6" />
+              </Button>
+              
+              <Button
+                size="icon"
+                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                onClick={() => {/* Handle Facebook share */}}
+                data-testid="button-share-facebook"
+              >
+                <FacebookLogo className="h-6 w-6" />
+              </Button>
+              
+              <Button
+                size="icon"
+                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                onClick={() => {/* Handle LinkedIn share */}}
+                data-testid="button-share-linkedin"
+              >
+                <LinkedinLogo className="h-6 w-6" />
+              </Button>
+              
+              <Button
+                size="icon"
+                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                onClick={downloadPhoto}
+                data-testid="button-save-photo"
+              >
+                <Download className="h-6 w-6" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
