@@ -295,7 +295,7 @@ export default function SnapCameraView({
   // Captured photo view
   if (capturedPhoto) {
     return (
-      <div className="relative w-full h-screen bg-black flex flex-col overflow-hidden">
+      <div className="relative w-full h-screen bg-black flex flex-col">
         {/* Top Bar - Matching Home Screen */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
           {/* Profile Icon */}
@@ -330,7 +330,7 @@ export default function SnapCameraView({
           </Button>
         </div>
         
-        {/* Main Photo Container - Fits between top and share section */}
+        {/* Main Photo Container - Fits between top (80px) and share section (110px) */}
         <div className="absolute top-20 bottom-28 left-0 right-0 flex items-center justify-center px-4">
           <div className="relative w-full h-full max-w-sm mx-auto flex items-center justify-center">
             {/* Photo with constrained size to fit available space while maintaining 9:16 ratio */}
@@ -357,7 +357,7 @@ export default function SnapCameraView({
           </div>
         </div>
         
-        {/* Share Section */}
+        {/* Share Section - Moved up slightly */}
         <div className="absolute bottom-4 left-0 right-0 z-10 p-6">
           <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto">
             <div className="flex justify-center gap-6">
@@ -485,12 +485,13 @@ export default function SnapCameraView({
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
-      {/* Camera Canvas */}
+      {/* Camera Canvas - Moved Up */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+        className="absolute w-full h-full"
         style={{ 
-          objectFit: 'cover'
+          objectFit: 'contain',
+          top: '-20px'
         }}
       />
 

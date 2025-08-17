@@ -3,14 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Basic reset */
-html, body {
-  margin: 0;
-  padding: 0;
-}
-
-
-
 :root {
   --font-inter: 'Inter', sans-serif;
   --background: 0 0% 100%;
