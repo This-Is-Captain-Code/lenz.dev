@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { Lens, User } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
@@ -26,6 +27,7 @@ export default function SnapCameraView({
 }: SnapCameraViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const { toast } = useToast();
   const { isFrameReady } = useMiniKit();
   const { composeCast } = useComposeCast();
@@ -383,7 +385,7 @@ export default function SnapCameraView({
             variant="ghost"
             size="icon"
             className="text-white hover:bg-white/20"
-            onClick={onOpenSidebar}
+            onClick={() => router.push('/dashboard')}
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
               <UserIcon className="h-4 w-4 text-white" />
@@ -623,7 +625,7 @@ export default function SnapCameraView({
           variant="ghost"
           size="icon"
           className="text-white hover:bg-white/20"
-          onClick={onOpenSidebar}
+          onClick={() => router.push('/dashboard')}
         >
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
             <UserIcon className="h-4 w-4 text-white" />
