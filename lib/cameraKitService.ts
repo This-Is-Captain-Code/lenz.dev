@@ -4,9 +4,24 @@
  */
 import { SNAP_API_TOKEN } from './config';
 
+// Dynamic imports for client-side only
+let bootstrapCameraKit: any;
+let CameraKit: any;
+let CameraKitSession: any;
+
+// Load Camera Kit only on client side
+const loadCameraKit = async () => {
+  if (typeof window !== 'undefined' && !bootstrapCameraKit) {
+    const cameraKitModule = await import('@snap/camera-kit');
+    bootstrapCameraKit = cameraKitModule.bootstrapCameraKit;
+    CameraKit = cameraKitModule.CameraKit;
+    CameraKitSession = cameraKitModule.CameraKitSession;
+  }
+};
+
 // Simple implementation directly from the Snap Camera Kit tutorial
-let cameraKit: any = null;
-let session: any = null;
+let cameraKit: CameraKit | null = null;
+let session: CameraKitSession | null = null;
 let currentLensId: string | null = null;
 
 interface InitOptions {
@@ -21,11 +36,11 @@ export const initializeCamera = async ({ canvas, facingMode }: InitOptions): Pro
   try {
     console.log('Initializing basic Camera Kit setup...');
     
+    // Load Camera Kit module
+    await loadCameraKit();
+    
     // Check for custom API key first
     const apiToken = (window as any).SNAP_CUSTOM_API_KEY || SNAP_API_TOKEN;
-    
-    // Import Camera Kit dynamically
-    const { bootstrapCameraKit } = await import('@snap/camera-kit');
     
     // Bootstrap Camera Kit with appropriate API token
     cameraKit = await bootstrapCameraKit({
@@ -76,34 +91,36 @@ export const applyLensToCanvas = async (
   }
   
   try {
-    console.log(`Attempting to apply lens: ${lensId} from group: ${groupId || 'default'}`);
+    console.log(`Applying lens ${lensId} from group ${groupId}`);
     
-    // Check for custom group ID first, then fall back to config or provided groupId
-    let lensGroupId = (window as any).SNAP_CUSTOM_GROUP_ID;
-    
-    // If no custom group ID in window, import from config
-    if (!lensGroupId) {
-      const { SNAP_GROUP_ID } = await import('./config');
-      lensGroupId = SNAP_GROUP_ID;
+    // Skip if same lens is already applied
+    if (currentLensId === lensId) {
+      console.log('Lens already applied, skipping');
+      return;
     }
     
-    // Final fallback to the groupId parameter
-    if (!lensGroupId && groupId) {
-      lensGroupId = groupId;
+    let lens;
+    
+    if (groupId) {
+      // Fetch the lens from the specified group
+      const lensRepository = cameraKit.lensRepository;
+      const group = await lensRepository.getGroup(groupId);
+      lens = await group.getLens(lensId);
+    } else {
+      // Fallback to direct lens fetch if no group
+      const lensRepository = cameraKit.lensRepository;
+      lens = await lensRepository.getLens(lensId);
     }
     
-    console.log(`Creating lens with specific ID and group:`, { lensId, groupId: lensGroupId });
+    if (!lens) {
+      throw new Error(`Lens ${lensId} not found`);
+    }
     
-    // Load the lens with appropriate group ID
-    const lens = await cameraKit.lensRepository.loadLens(lensId, lensGroupId as any);
-    console.log(`Successfully created lens with specific ID:`, lensId);
-    console.log('Lens loaded successfully');
-    
+    // Apply the lens
     await session.applyLens(lens);
-    console.log('Lens applied successfully');
-    
-    // Store the lens ID for later
     currentLensId = lensId;
+    console.log(`Successfully applied lens: ${lensId}`);
+    
   } catch (error) {
     console.error('Failed to apply lens:', error);
     throw error;
@@ -111,53 +128,77 @@ export const applyLensToCanvas = async (
 };
 
 /**
- * Capture current canvas state as an image
+ * Capture a photo from the canvas
  */
-export const captureCanvas = (canvas: HTMLCanvasElement): string => {
+export const captureCanvas = async (canvas: HTMLCanvasElement): Promise<string> => {
   try {
-    console.log('Capturing canvas with dimensions:', canvas.width, 'x', canvas.height);
+    console.log('Capturing photo from canvas...');
     
-    // Create a temporary canvas to ensure we capture the full image
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
+    // Create a new canvas for the final image with 9:16 aspect ratio
+    const captureCanvas = document.createElement('canvas');
+    const ctx = captureCanvas.getContext('2d');
     
-    // Draw the content of the original canvas to the temporary one
-    const tempCtx = tempCanvas.getContext('2d');
-    if (!tempCtx) {
-      throw new Error('Could not get canvas context');
+    if (!ctx) {
+      throw new Error('Failed to get canvas context');
     }
     
-    // Flip the image horizontally to correct the mirror effect
-    tempCtx.scale(-1, 1);
-    tempCtx.drawImage(canvas, -canvas.width, 0);
+    // Set the capture dimensions to 9:16 aspect ratio
+    const targetWidth = 1080;
+    const targetHeight = 1920;
+    captureCanvas.width = targetWidth;
+    captureCanvas.height = targetHeight;
     
-    // Get the data URL with higher quality
-    const dataUrl = tempCanvas.toDataURL('image/png', 1.0);
-    console.log('Canvas captured successfully, data URL length:', dataUrl.length);
+    // Calculate source dimensions to maintain aspect ratio
+    const sourceWidth = canvas.width;
+    const sourceHeight = canvas.height;
+    
+    // Calculate scaling to fit the target dimensions
+    const scaleX = targetWidth / sourceWidth;
+    const scaleY = targetHeight / sourceHeight;
+    const scale = Math.max(scaleX, scaleY); // Use max to ensure full coverage
+    
+    // Calculate source rect to center the crop
+    const scaledSourceWidth = targetWidth / scale;
+    const scaledSourceHeight = targetHeight / scale;
+    const sourceX = (sourceWidth - scaledSourceWidth) / 2;
+    const sourceY = (sourceHeight - scaledSourceHeight) / 2;
+    
+    // Fill with black background
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
+    
+    // Draw the canvas content, cropped and scaled to 9:16
+    ctx.drawImage(
+      canvas,
+      sourceX, sourceY, scaledSourceWidth, scaledSourceHeight,
+      0, 0, targetWidth, targetHeight
+    );
+    
+    // Convert to data URL
+    const dataUrl = captureCanvas.toDataURL('image/png', 1.0);
+    console.log('Photo captured successfully');
     
     return dataUrl;
   } catch (error) {
-    console.error('Failed to capture canvas:', error);
-    throw new Error('Failed to capture photo');
+    console.error('Failed to capture photo:', error);
+    throw error;
   }
 };
 
 /**
- * Cleanup resources
+ * Clean up Camera Kit resources
  */
-export const cleanupCameraKit = async (): Promise<void> => {
+export const cleanupCamera = async (): Promise<void> => {
   try {
     if (session) {
-      await session.pause();
+      await session.destroy();
       session = null;
     }
     
     cameraKit = null;
     currentLensId = null;
-    
-    console.log('Camera Kit resources cleaned up');
+    console.log('Camera Kit cleaned up successfully');
   } catch (error) {
-    console.warn('Error during cleanup:', error);
+    console.error('Failed to cleanup Camera Kit:', error);
   }
 };

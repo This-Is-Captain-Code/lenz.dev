@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"lib/cameraKitService.ts -> ./config\":{\"id\":\"lib/cameraKitService.ts -> ./config\",\"files\":[]},\"lib/cameraKitService.ts -> @snap/camera-kit\":{\"id\":\"lib/cameraKitService.ts -> @snap/camera-kit\",\"files\":[]}}"
+self.__REACT_LOADABLE_MANIFEST="{\"lib/cameraKitService.ts -> @snap/camera-kit\":{\"id\":\"lib/cameraKitService.ts -> @snap/camera-kit\",\"files\":[]}}"
