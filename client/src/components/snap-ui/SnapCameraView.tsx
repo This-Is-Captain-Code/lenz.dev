@@ -630,7 +630,7 @@ export function SnapCameraView({
         ref={canvasRef} 
         width={720}
         height={1280}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover transform scale-x-[-1]"
         data-testid="canvas-camera"
       />
       
