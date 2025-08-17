@@ -102,12 +102,33 @@ export default function SnapCameraView({
   useEffect(() => {
     if (isCameraReady && canvasRef.current && currentLens) {
       console.log('Applying lens:', currentLens.name);
-      applyLensToCanvas(canvasRef.current, currentLens.snapLensId, currentLens.snapGroupId)
+      console.log('Lens details:', {
+        id: currentLens.id,
+        snapLensId: currentLens.snapLensId,
+        groupId: currentLens.groupId,
+        name: currentLens.name
+      });
+      
+      applyLensToCanvas(canvasRef.current, currentLens.snapLensId, currentLens.groupId)
+        .then(() => {
+          console.log('Successfully applied lens:', currentLens.name);
+        })
         .catch((error) => {
           console.error('Failed to apply lens:', error);
+          console.error('Error applying lens details:', {
+            lensName: currentLens.name,
+            snapLensId: currentLens.snapLensId,
+            groupId: currentLens.groupId,
+            errorMessage: error instanceof Error ? error.message : 'Unknown error'
+          });
+          toast({
+            title: "Lens Error",
+            description: `Failed to apply lens: ${currentLens.name}`,
+            variant: "destructive"
+          });
         });
     }
-  }, [currentLens, isCameraReady]);
+  }, [currentLens, isCameraReady, toast]);
   
   // Switch between front and back camera
   const switchCamera = () => {

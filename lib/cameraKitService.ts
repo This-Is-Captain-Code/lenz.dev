@@ -92,16 +92,21 @@ export const applyLensToCanvas = async (
     
     let lens;
     
+    const lensRepository = cameraKit.lensRepository;
+    
     if (groupId) {
       // Fetch the lens from the specified group
-      const lensRepository = cameraKit.lensRepository;
+      console.log('Fetching group:', groupId);
       const group = await lensRepository.getGroup(groupId);
+      console.log('Group fetched successfully, getting lens:', lensId);
       lens = await group.getLens(lensId);
     } else {
       // Fallback to direct lens fetch if no group
-      const lensRepository = cameraKit.lensRepository;
+      console.log('Fetching lens directly:', lensId);
       lens = await lensRepository.getLens(lensId);
     }
+    
+    console.log('Lens object:', lens);
     
     if (!lens) {
       throw new Error(`Lens ${lensId} not found`);
@@ -114,6 +119,14 @@ export const applyLensToCanvas = async (
     
   } catch (error) {
     console.error('Failed to apply lens:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      lensId,
+      groupId,
+      hasCameraKit: !!cameraKit,
+      hasSession: !!session
+    });
     throw error;
   }
 };
