@@ -450,7 +450,7 @@ export default function SnapCameraView({
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
         style={{ 
-          objectFit: 'cover'
+          objectFit: 'contain'
         }}
       />
 
