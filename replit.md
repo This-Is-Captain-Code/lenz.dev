@@ -21,7 +21,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Frontend Architecture
 - **Framework**: Next.js 14+ with App Router and TypeScript for modern full-stack development
-- **Routing**: Next.js App Router with file-based routing in `app/` directory
+- **Routing**: Single-page application loading directly at root route `/` - no separate camera page needed
 - **UI Components**: Radix UI components with shadcn/ui design system for accessibility and consistency
 - **Styling**: Tailwind CSS with custom CSS variables for theming and responsive design
 - **State Management**: TanStack Query (React Query) for server state management and caching

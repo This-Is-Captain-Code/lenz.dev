@@ -1,5 +1,7 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import SnapCameraView from '../components/snap-ui/SnapCameraView';
 
 export default function HomePage() {
-  redirect('/camera');
+  return <SnapCameraView />;
 }
