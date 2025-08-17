@@ -245,7 +245,7 @@ export function SnapCameraView({
   // Render top bar with profile, filter name, and help icon
   const renderTopBar = () => {
     return (
-      <div className="absolute top-0 inset-x-0 z-10 flex items-center justify-between p-4 pt-6 bg-gradient-to-b from-black/30 to-transparent">
+      <div className="absolute top-0 inset-x-0 z-10 flex items-center justify-between p-4 pt-4 bg-gradient-to-b from-black/30 to-transparent">
         {/* Profile Icon - Top Left */}
         <Button 
           size="icon" 
@@ -455,14 +455,14 @@ export function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative h-full w-full overflow-hidden bg-black flex items-center justify-center font-['Inter_Display',_system-ui,_sans-serif]"
+      className="relative h-screen w-full overflow-hidden bg-black font-['Inter_Display',_system-ui,_sans-serif]"
     >
       {/* Canvas for the camera view */}
       <canvas 
         ref={canvasRef} 
         width={720}
         height={1280}
-        className="max-h-full max-w-full object-contain"
+        className="absolute inset-0 w-full h-full object-cover"
         data-testid="canvas-camera"
       />
       
