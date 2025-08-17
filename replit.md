@@ -7,7 +7,9 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
   - Installed @coinbase/onchainkit package for Farcaster and blockchain integration
   - Created MiniKitProvider wrapper for Web3 wallet connectivity
   - Integrated useMiniKit hook for frame initialization
-  - Added support for NFT minting, crypto transactions, and Farcaster social features
+  - Added NFT minting button that opens Zora.co with clipboard image copy
+  - Added Farcaster share button using useComposeCast hook
+  - Both features copy captured photos to clipboard for easy sharing
   - Configured Base chain integration for optimal Web3 performance
 - **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
   - Removed all Express server dependencies and files (server/ directory)
