@@ -6,6 +6,16 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
 
 Preferred communication style: Simple, everyday language.
 
+## UI Design Preferences
+- **Font**: Inter Display for modern, clean typography
+- **Camera Interface**: Snapchat-like layout with:
+  - Profile icon at top left
+  - Filter name at top center in rounded background
+  - Help icon (question mark) at top right
+  - Swipeable lens carousel at bottom (4 lenses visible, infinite scroll)
+  - Large capture button centered below carousel
+  - Touch/swipe gestures for lens navigation
+
 # System Architecture
 
 ## Frontend Architecture

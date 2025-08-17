@@ -21,8 +21,6 @@ export function SnapCameraView({
 }: SnapCameraViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const leftSelectorRef = useRef<HTMLDivElement>(null);
-  const rightSelectorRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
@@ -129,29 +127,65 @@ export function SnapCameraView({
     }
   }, [currentLens, isCameraReady, toast]);
   
-  // Setup gesture handling for lens selector areas
+  // Setup gesture handling for carousel swipe
   useEffect(() => {
-    const leftSelector = leftSelectorRef.current;
-    const rightSelector = rightSelectorRef.current;
+    const carousel = containerRef.current;
+    if (!carousel) return;
     
-    if (!leftSelector || !rightSelector) return;
+    let startX = 0;
+    let isDragging = false;
+    let startTime = 0;
     
-    const handleLeftSwipe = (e: TouchEvent) => {
+    const handleTouchStart = (e: TouchEvent) => {
+      // Only handle touches in the bottom area (carousel area)
+      const touch = e.touches[0];
+      const rect = carousel.getBoundingClientRect();
+      const relativeY = touch.clientY - rect.top;
+      const carouselAreaStart = rect.height * 0.75; // Bottom 25% of screen
+      
+      if (relativeY < carouselAreaStart) return;
+      
+      startX = touch.clientX;
+      startTime = Date.now();
+      isDragging = true;
       e.preventDefault();
-      cycleToPreviousLens();
     };
     
-    const handleRightSwipe = (e: TouchEvent) => {
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
       e.preventDefault();
-      cycleToNextLens();
     };
     
-    leftSelector.addEventListener('touchstart', handleLeftSwipe);
-    rightSelector.addEventListener('touchstart', handleRightSwipe);
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isDragging) return;
+      
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaTime = Date.now() - startTime;
+      const velocity = Math.abs(deltaX) / deltaTime;
+      
+      // Minimum swipe distance and velocity for lens change
+      if (Math.abs(deltaX) > 50 || velocity > 0.5) {
+        if (deltaX > 0) {
+          // Swipe right - previous lens
+          cycleToPreviousLens();
+        } else {
+          // Swipe left - next lens
+          cycleToNextLens();
+        }
+      }
+      
+      isDragging = false;
+    };
+    
+    carousel.addEventListener('touchstart', handleTouchStart, { passive: false });
+    carousel.addEventListener('touchmove', handleTouchMove, { passive: false });
+    carousel.addEventListener('touchend', handleTouchEnd);
     
     return () => {
-      leftSelector.removeEventListener('touchstart', handleLeftSwipe);
-      rightSelector.removeEventListener('touchstart', handleRightSwipe);
+      carousel.removeEventListener('touchstart', handleTouchStart);
+      carousel.removeEventListener('touchmove', handleTouchMove);
+      carousel.removeEventListener('touchend', handleTouchEnd);
     };
   }, [currentLensIndex, lenses.length]);
   
@@ -261,81 +295,62 @@ export function SnapCameraView({
     );
   };
   
-  // Render bottom section with lens selectors and capture button
+  // Render bottom section with swipeable lens carousel and capture button
   const renderBottomControls = () => {
     const visibleLenses = getVisibleLenses();
     
     return (
-      <div className="absolute bottom-0 inset-x-0 z-10 flex items-center justify-center pb-8 bg-gradient-to-t from-black/30 to-transparent">
-        <div className="flex items-center justify-center w-full max-w-md">
-          {/* Left lens selector area */}
-          <div 
-            ref={leftSelectorRef}
-            className="flex-1 flex items-center justify-center py-4 touch-manipulation"
-            data-testid="area-left-lens-selector"
-          >
-            <div className="flex space-x-2">
-              {visibleLenses.slice(0, 2).map((lens, index) => {
-                const actualIndex = visibleLensStartIndex + index;
-                const isSelected = actualIndex === currentLensIndex;
-                return (
-                  <Button
-                    key={lens.id}
-                    size="icon"
-                    className={`h-12 w-12 rounded-full text-sm font-bold transition-all ${
-                      isSelected 
-                        ? 'bg-white text-black scale-110' 
-                        : 'bg-white/20 text-white border border-white/40'
-                    }`}
-                    onClick={() => setCurrentLensIndex(actualIndex)}
-                    data-testid={`button-lens-${actualIndex + 1}`}
-                  >
-                    {actualIndex + 1}
-                  </Button>
-                );
-              })}
-            </div>
+      <div className="absolute bottom-0 inset-x-0 z-10 pb-8 bg-gradient-to-t from-black/40 via-black/20 to-transparent">
+        {/* Swipeable lens carousel */}
+        <div className="flex justify-center mb-6 px-4">
+          <div className="flex items-center space-x-3 px-6 py-3 bg-black/30 backdrop-blur-sm rounded-full border border-white/20">
+            {visibleLenses.map((lens, index) => {
+              const actualIndex = visibleLensStartIndex + index;
+              const isSelected = actualIndex === currentLensIndex;
+              return (
+                <Button
+                  key={lens.id}
+                  size="icon"
+                  className={`h-12 w-12 rounded-full text-sm font-bold transition-all duration-200 touch-manipulation ${
+                    isSelected 
+                      ? 'bg-white text-black scale-110 shadow-lg' 
+                      : 'bg-white/20 text-white border border-white/40 hover:bg-white/30'
+                  }`}
+                  onClick={() => setCurrentLensIndex(actualIndex)}
+                  data-testid={`button-lens-${actualIndex + 1}`}
+                >
+                  {actualIndex + 1}
+                </Button>
+              );
+            })}
+            
+            {/* Show dots if there are more lenses */}
+            {lenses.length > 4 && (
+              <div className="flex space-x-1 ml-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full" />
+                <div className="w-1 h-1 bg-white/40 rounded-full" />
+                <div className="w-1 h-1 bg-white/40 rounded-full" />
+              </div>
+            )}
           </div>
-          
-          {/* Center capture button */}
-          <div className="flex-none px-6">
-            <Button 
-              size="icon" 
-              className="h-20 w-20 rounded-full bg-white text-black hover:bg-white/90 border-4 border-white/40 transition-transform active:scale-95"
-              onClick={capturePhoto}
-              data-testid="button-capture"
-            >
-              <Camera className="h-10 w-10" />
-            </Button>
-          </div>
-          
-          {/* Right lens selector area */}
-          <div 
-            ref={rightSelectorRef}
-            className="flex-1 flex items-center justify-center py-4 touch-manipulation"
-            data-testid="area-right-lens-selector"
+        </div>
+        
+        {/* Center capture button */}
+        <div className="flex justify-center">
+          <Button 
+            size="icon" 
+            className="h-20 w-20 rounded-full bg-white text-black hover:bg-white/90 border-4 border-white/40 transition-transform active:scale-95 shadow-2xl"
+            onClick={capturePhoto}
+            data-testid="button-capture"
           >
-            <div className="flex space-x-2">
-              {visibleLenses.slice(2, 4).map((lens, index) => {
-                const actualIndex = visibleLensStartIndex + index + 2;
-                const isSelected = actualIndex === currentLensIndex;
-                return (
-                  <Button
-                    key={lens.id}
-                    size="icon"
-                    className={`h-12 w-12 rounded-full text-sm font-bold transition-all ${
-                      isSelected 
-                        ? 'bg-white text-black scale-110' 
-                        : 'bg-white/20 text-white border border-white/40'
-                    }`}
-                    onClick={() => setCurrentLensIndex(actualIndex)}
-                    data-testid={`button-lens-${actualIndex + 1}`}
-                  >
-                    {actualIndex + 1}
-                  </Button>
-                );
-              })}
-            </div>
+            <Camera className="h-10 w-10" />
+          </Button>
+        </div>
+        
+        {/* Swipe indicator hint */}
+        <div className="flex justify-center mt-3">
+          <div className="text-white/60 text-xs font-medium">
+            ← swipe to change lens →
           </div>
         </div>
       </div>
