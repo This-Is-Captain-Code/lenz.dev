@@ -128,8 +128,9 @@ export const captureCanvas = (canvas: HTMLCanvasElement): string => {
       throw new Error('Could not get canvas context');
     }
     
-    // Draw the original canvas content
-    tempCtx.drawImage(canvas, 0, 0);
+    // Flip the image horizontally to correct the mirror effect
+    tempCtx.scale(-1, 1);
+    tempCtx.drawImage(canvas, -canvas.width, 0);
     
     // Get the data URL with higher quality
     const dataUrl = tempCanvas.toDataURL('image/png', 1.0);
