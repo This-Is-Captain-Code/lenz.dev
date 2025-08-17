@@ -12,9 +12,10 @@ Preferred communication style: Simple, everyday language.
   - Profile icon at top left
   - Filter name at top center in rounded background
   - Help icon (question mark) at top right
-  - Swipeable lens carousel at bottom (4 lenses visible, infinite scroll)
-  - Large capture button centered below carousel
-  - Touch/swipe gestures for lens navigation
+  - Centered lens carousel at bottom (5 lenses visible, selected always in center)
+  - Selected lens acts as capture button with camera icon
+  - Carousel shifts horizontally when swiping to keep selected lens centered
+  - Touch/swipe gestures for lens navigation with smooth transitions
 
 # System Architecture
 

@@ -32,8 +32,7 @@ export function SnapCameraView({
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   
-  // Lens selector state - showing 4 lenses at a time
-  const [visibleLensStartIndex, setVisibleLensStartIndex] = useState(0);
+
   
   // Fetch lenses
   const { data: allLenses = [], isLoading: isLoadingLenses } = useQuery<Lens[]>({
@@ -295,61 +294,89 @@ export function SnapCameraView({
     );
   };
   
-  // Render bottom section with swipeable lens carousel and capture button
+  // Render bottom section with centered carousel (selected lens always in center)
   const renderBottomControls = () => {
-    const visibleLenses = getVisibleLenses();
+    // Calculate which lenses to show around the selected one
+    const getCarouselLenses = () => {
+      if (lenses.length === 0) return [];
+      
+      const result = [];
+      const totalVisible = 5; // Show 5 lenses total (2 left + center + 2 right)
+      const centerOffset = Math.floor(totalVisible / 2);
+      
+      for (let i = -centerOffset; i <= centerOffset; i++) {
+        const index = (currentLensIndex + i + lenses.length) % lenses.length;
+        result.push({
+          lens: lenses[index],
+          actualIndex: index,
+          position: i, // -2, -1, 0, 1, 2 where 0 is center
+        });
+      }
+      
+      return result;
+    };
+    
+    const carouselLenses = getCarouselLenses();
     
     return (
-      <div className="absolute bottom-0 inset-x-0 z-10 pb-8 bg-gradient-to-t from-black/40 via-black/20 to-transparent">
-        {/* Swipeable lens carousel */}
-        <div className="flex justify-center mb-6 px-4">
-          <div className="flex items-center space-x-3 px-6 py-3 bg-black/30 backdrop-blur-sm rounded-full border border-white/20">
-            {visibleLenses.map((lens, index) => {
-              const actualIndex = visibleLensStartIndex + index;
-              const isSelected = actualIndex === currentLensIndex;
+      <div className="absolute bottom-0 inset-x-0 z-10 pb-12 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
+        {/* Centered lens carousel */}
+        <div className="flex justify-center items-center px-4">
+          <div className="flex items-center justify-center space-x-4">
+            {carouselLenses.map(({ lens, actualIndex, position }) => {
+              const isSelected = position === 0; // Center position is selected
+              const isCapture = isSelected; // Selected lens acts as capture button
+              
+              // Size based on position
+              let sizeClass = 'h-16 w-16'; // Default side lenses
+              if (position === -1 || position === 1) sizeClass = 'h-18 w-18'; // Adjacent to center
+              if (isSelected) sizeClass = 'h-20 w-20'; // Center (selected)
+              
+              // Opacity based on distance from center
+              let opacityClass = 'opacity-40';
+              if (Math.abs(position) === 1) opacityClass = 'opacity-70';
+              if (isSelected) opacityClass = 'opacity-100';
+              
               return (
-                <Button
-                  key={lens.id}
-                  size="icon"
-                  className={`h-12 w-12 rounded-full text-sm font-bold transition-all duration-200 touch-manipulation ${
-                    isSelected 
-                      ? 'bg-white text-black scale-110 shadow-lg' 
-                      : 'bg-white/20 text-white border border-white/40 hover:bg-white/30'
-                  }`}
-                  onClick={() => setCurrentLensIndex(actualIndex)}
-                  data-testid={`button-lens-${actualIndex + 1}`}
-                >
-                  {actualIndex + 1}
-                </Button>
+                <div key={`${lens.id}-${position}`} className="flex flex-col items-center">
+                  <Button
+                    size="icon"
+                    className={`${sizeClass} rounded-full text-lg font-bold transition-all duration-300 touch-manipulation ${opacityClass} ${
+                      isSelected
+                        ? 'bg-white text-black border-4 border-black shadow-2xl scale-110'
+                        : 'bg-white/80 text-black border-2 border-white/60 hover:bg-white hover:scale-105'
+                    }`}
+                    onClick={() => {
+                      if (isCapture) {
+                        capturePhoto();
+                      } else {
+                        setCurrentLensIndex(actualIndex);
+                      }
+                    }}
+                    data-testid={isCapture ? 'button-capture' : `button-lens-${actualIndex + 1}`}
+                  >
+                    {isCapture ? (
+                      <Camera className="h-8 w-8" />
+                    ) : (
+                      <span>{actualIndex + 1}</span>
+                    )}
+                  </Button>
+                  
+                  {/* Lens name below selected lens */}
+                  {isSelected && (
+                    <div className="mt-2 text-white text-xs font-medium text-center opacity-80">
+                      {lens.name}
+                    </div>
+                  )}
+                </div>
               );
             })}
-            
-            {/* Show dots if there are more lenses */}
-            {lenses.length > 4 && (
-              <div className="flex space-x-1 ml-2">
-                <div className="w-1 h-1 bg-white/40 rounded-full" />
-                <div className="w-1 h-1 bg-white/40 rounded-full" />
-                <div className="w-1 h-1 bg-white/40 rounded-full" />
-              </div>
-            )}
           </div>
         </div>
         
-        {/* Center capture button */}
-        <div className="flex justify-center">
-          <Button 
-            size="icon" 
-            className="h-20 w-20 rounded-full bg-white text-black hover:bg-white/90 border-4 border-white/40 transition-transform active:scale-95 shadow-2xl"
-            onClick={capturePhoto}
-            data-testid="button-capture"
-          >
-            <Camera className="h-10 w-10" />
-          </Button>
-        </div>
-        
         {/* Swipe indicator hint */}
-        <div className="flex justify-center mt-3">
-          <div className="text-white/60 text-xs font-medium">
+        <div className="flex justify-center mt-4">
+          <div className="text-white/50 text-xs font-medium">
             ← swipe to change lens →
           </div>
         </div>
