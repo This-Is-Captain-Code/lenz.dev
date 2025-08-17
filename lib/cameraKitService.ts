@@ -32,6 +32,7 @@ export const initializeCamera = async ({ canvas, facingMode }: InitOptions): Pro
     
     // Check for custom API key first
     const apiToken = (window as any).SNAP_CUSTOM_API_KEY || SNAP_API_TOKEN;
+    console.log('Using API token:', apiToken.substring(0, 50) + '...');
     
     // Bootstrap Camera Kit
     cameraKit = await bootstrapCameraKit({

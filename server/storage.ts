@@ -32,12 +32,12 @@ export class MemStorage implements IStorage {
     const defaultLenses: Lens[] = [
       {
         id: "1",
-        name: "Saga Lens",
-        description: "Professional AR lens with advanced effects and real-time processing.",
-        creator: "saga_creator",
+        name: "Test Lens (Old Working)",
+        description: "Fallback lens to test if Camera Kit is working with old credentials.",
+        creator: "test_creator",
         downloads: 12500,
-        snapLensId: "c0858ad5-11f4-4ba8-b7b9-edb9b64a2164",
-        snapGroupId: "cd486701-b5b7-42f3-b809-f4cc276d5e7b",
+        snapLensId: "49a28a50-9294-475b-bdb5-d0b7395109e2",
+        snapGroupId: "b5551368-7881-4a23-a034-a0e757ec85a7",
         category: "portrait",
         isActive: true,
         createdAt: new Date(),
