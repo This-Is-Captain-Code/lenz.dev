@@ -441,12 +441,21 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-screen bg-black overflow-hidden flex flex-col"
+      className="relative w-full h-screen bg-black overflow-hidden"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
-      {/* Top Section - Always visible */}
-      <div className="flex items-center justify-between p-4 z-20 bg-transparent">
+      {/* Camera Canvas - Full Screen */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ 
+          objectFit: 'cover'
+        }}
+      />
+
+      {/* Top Section - Overlay */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-transparent">
         {/* Profile Icon */}
         <Button
           variant="ghost"
@@ -477,17 +486,6 @@ export default function SnapCameraView({
             <span className="text-white text-sm font-bold">?</span>
           </div>
         </Button>
-      </div>
-
-      {/* Middle Section - Camera Canvas */}
-      <div className="flex-1 relative">
-        <canvas
-          ref={canvasRef}
-          className="w-full h-full"
-          style={{ 
-            objectFit: 'cover'
-          }}
-        />
       </div>
       
       {/* Bottom Controls - Lens Selector */}
