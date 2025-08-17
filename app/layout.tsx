@@ -4,6 +4,7 @@ import './globals.css';
 import { QueryProvider } from '../components/query-provider';
 import { Toaster } from '../components/ui/toaster';
 import { MiniKitContextProvider } from '../providers/MiniKitProvider';
+import { LenzWalletProvider } from '../providers/LenzWalletProvider';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -48,10 +49,12 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
         <MiniKitContextProvider>
-          <QueryProvider>
-            {children}
-            <Toaster />
-          </QueryProvider>
+          <LenzWalletProvider>
+            <QueryProvider>
+              {children}
+              <Toaster />
+            </QueryProvider>
+          </LenzWalletProvider>
         </MiniKitContextProvider>
       </body>
     </html>

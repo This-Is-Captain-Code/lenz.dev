@@ -17,6 +17,13 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
   - Updated metadata with Open Graph and Twitter card support
   - Configured proper environment variable fallbacks in MiniKitProvider
   - Set up placeholder values for Farcaster credentials (HEADER, PAYLOAD, SIGNATURE)
+- **LENZ CHAINLET WALLET INTEGRATION**: Added dedicated LenZ chainlet wallet system
+  - Created LenzWalletProvider with ethers.js integration for custom Saga chainlet
+  - Built LenzWalletModal and LenzWalletButton components for wallet management
+  - Integrated wallet creation, import, and balance checking on LenZ chainlet
+  - Added LenzNftMinter component for direct NFT minting on LenZ chain
+  - Configured chainlet details: ID, RPC endpoints, native LENZ token support
+  - Positioned as secondary wallet option alongside Base app's primary wallet
 - **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
   - Removed all Express server dependencies and files (server/ directory)
   - Migrated all Express API routes to Next.js API routes (app/api/)

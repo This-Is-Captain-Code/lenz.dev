@@ -10,6 +10,8 @@ import { Camera, Repeat, Download, Info, X, ChevronUp, User as UserIcon, Sparkle
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMiniKit, useComposeCast } from '@coinbase/onchainkit/minikit';
+import { LenzWalletButton } from '../lenz-wallet/LenzWalletButton';
+import { LenzNftMinter } from '../lenz-wallet/LenzNftMinter';
 
 interface SnapCameraViewProps {
   defaultLensId?: string;
@@ -439,16 +441,27 @@ export default function SnapCameraView({
         <div className="absolute bottom-4 left-0 right-0 z-10 p-6">
           <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto">
             <div className="flex justify-center gap-4 flex-wrap">
-              {/* NFT Mint Button */}
+              {/* Zora NFT Mint Button */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="text-white hover:bg-purple-500/20 w-12 h-12 border border-purple-400/30"
                 onClick={handleMintNft}
                 disabled={!isFrameReady}
+                title="Mint NFT on Zora"
               >
                 <Sparkles className="h-6 w-6 text-purple-400" />
               </Button>
+
+              {/* LenZ Chain NFT Mint Button */}
+              <LenzNftMinter 
+                imageUrl={capturedPhoto} 
+                metadata={{
+                  name: `LenZ AR Photo - ${currentLens?.name}`,
+                  description: `AR photo captured using ${currentLens?.name} lens on LenZ Camera`,
+                  lens: currentLens?.name
+                }}
+              />
               
               {/* Farcaster Share Button */}
               <Button
@@ -624,17 +637,27 @@ export default function SnapCameraView({
           </div>
         )}
         
-        {/* Help Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-white/20"
-          onClick={() => setShowLensInfo(!showLensInfo)}
-        >
-          <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
-            <span className="text-white text-sm font-bold">?</span>
-          </div>
-        </Button>
+        {/* Right Side - Wallet and Help */}
+        <div className="flex items-center gap-2">
+          {/* LenZ Wallet Button */}
+          <LenzWalletButton 
+            variant="ghost" 
+            size="sm"
+            className="text-white hover:bg-white/20 text-xs border border-white/20 bg-black/30 backdrop-blur-sm"
+          />
+          
+          {/* Help Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/20"
+            onClick={() => setShowLensInfo(!showLensInfo)}
+          >
+            <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
+              <span className="text-white text-sm font-bold">?</span>
+            </div>
+          </Button>
+        </div>
       </div>
       
       {/* Bottom Controls - Lens Selector */}
