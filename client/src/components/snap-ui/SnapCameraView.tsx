@@ -518,7 +518,7 @@ export function SnapCameraView({
         </div>
 
         {/* Main content area with photo */}
-        <div className="flex-1 flex flex-col items-center justify-center p-4 pt-20 pb-28">
+        <div className="flex-1 flex flex-col items-center justify-start p-4 pt-16 pb-28">
           {/* Photo frame with borders and overlay text */}
           <div className="relative w-full max-w-xs">
             <div className="bg-white rounded-3xl p-2 shadow-2xl">
