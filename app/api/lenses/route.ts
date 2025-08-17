@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { storage } from '../../../app/server/storage';
+import { storage } from '../../../server/storage';
 
 export async function GET() {
   try {
-    const lenses = await storage.getAllLenses();
+    const lenses = await storage.getLenses();
     return NextResponse.json(lenses);
   } catch (error) {
     console.error('Error fetching lenses:', error);

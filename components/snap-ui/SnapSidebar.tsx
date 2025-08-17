@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Lens, User } from '@shared/schema';
+import { Lens, User } from '../../shared/schema';
 import { X, MagnifyingGlass, Check } from '@phosphor-icons/react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';

@@ -44,6 +44,9 @@ export function SnapCameraView({
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   
+  // Calculate visible lens start index for carousel positioning
+  const visibleLensStartIndex = Math.max(0, currentLensIndex - 2);
+  
 
   
   // Fetch lenses
@@ -314,7 +317,7 @@ export function SnapCameraView({
   const shareToTwitter = async () => {
     if (capturedPhoto) {
       // Create a text for the tweet
-      const tweetText = "Captured using @lenzdotdev";
+      const tweetText = "Captured using " + String.fromCharCode(64) + "lenzdotdev";
       
       // Try to copy image to clipboard first
       const copied = await copyImageToClipboard(capturedPhoto);
@@ -596,7 +599,7 @@ export function SnapCameraView({
                   </div>
                   <div>
                     <div className="text-white font-semibold text-sm">
-                      {currentLens?.creator || '@unknown'}
+                      {currentLens?.creator || 'unknown'}
                     </div>
                     <div className="text-white/70 text-xs">
                       {currentLens?.downloads || 0} uses
