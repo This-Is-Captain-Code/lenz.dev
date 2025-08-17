@@ -548,7 +548,7 @@ export default function SnapCameraView({
           <div className="flex items-center gap-4">
             {getVisibleLenses().map(({ lens, offset, index }) => (
               <motion.div
-                key={lens?.id || index}
+                key={lens?.id ? `lens-${lens.id}` : `placeholder-${index}`}
                 className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
                 animate={{
                   scale: offset === 0 ? 1.2 : 0.8,
