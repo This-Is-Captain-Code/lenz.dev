@@ -518,15 +518,15 @@ export function SnapCameraView({
         </div>
 
         {/* Main content area with photo */}
-        <div className="flex-1 flex flex-col items-center justify-start p-6 pt-20 pb-8">
+        <div className="flex-1 flex flex-col items-center justify-center p-4 pt-20 pb-4">
           {/* Photo frame with borders and overlay text */}
-          <div className="relative max-w-xs w-full">
-            <div className="bg-white rounded-3xl p-2 shadow-2xl">
+          <div className="relative max-w-sm w-full mb-8">
+            <div className="bg-white rounded-3xl p-3 shadow-2xl">
               <div className="relative rounded-2xl overflow-hidden bg-black">
                 <img 
                   src={capturedPhoto} 
                   alt="Captured photo" 
-                  className="w-full h-auto aspect-[3/4] object-cover"
+                  className="w-full h-auto aspect-[4/5] object-cover"
                   data-testid="img-captured-photo"
                 />
                 
@@ -559,10 +559,10 @@ export function SnapCameraView({
         </div>
 
         {/* Share section positioned at same height as lens carousel */}
-        <div className="absolute bottom-0 inset-x-0 z-10 pb-12 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
+        <div className="absolute bottom-0 inset-x-0 z-10 pb-8 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
           <div className="flex justify-center px-4">
             {/* Share to section */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 max-w-sm w-full">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 max-w-sm w-full mx-4">
               <div className="text-white/70 text-sm font-medium mb-3 uppercase tracking-wider text-center">
                 SHARE TO
               </div>
