@@ -92,21 +92,16 @@ export const applyLensToCanvas = async (
     
     let lens;
     
-    const lensRepository = cameraKit.lensRepository;
+    // Use the correct Camera Kit API - loadLens method works!
+    console.log(`Creating lens with loadLens method:`, { lensId, groupId });
     
-    if (groupId) {
-      // Fetch the lens from the specified group
-      console.log('Fetching group:', groupId);
-      const group = await lensRepository.getGroup(groupId);
-      console.log('Group fetched successfully, getting lens:', lensId);
-      lens = await group.getLens(lensId);
-    } else {
-      // Fallback to direct lens fetch if no group
-      console.log('Fetching lens directly:', lensId);
-      lens = await lensRepository.getLens(lensId);
-    }
+    // Default to the known working group ID if none provided
+    const effectiveGroupId = groupId || 'b5551368-7881-4a23-a034-a0e757ec85a7';
     
-    console.log('Lens object:', lens);
+    console.log(`Loading lens ${lensId} from group ${effectiveGroupId}`);
+    lens = await cameraKit.lensRepository.loadLens(lensId, effectiveGroupId);
+    
+    console.log('Lens loaded successfully:', lens);
     
     if (!lens) {
       throw new Error(`Lens ${lensId} not found`);

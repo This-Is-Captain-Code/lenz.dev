@@ -105,11 +105,11 @@ export default function SnapCameraView({
       console.log('Lens details:', {
         id: currentLens.id,
         snapLensId: currentLens.snapLensId,
-        groupId: currentLens.groupId,
+        groupId: currentLens.snapGroupId,
         name: currentLens.name
       });
       
-      applyLensToCanvas(canvasRef.current, currentLens.snapLensId, currentLens.groupId)
+      applyLensToCanvas(canvasRef.current, currentLens.snapLensId, currentLens.snapGroupId)
         .then(() => {
           console.log('Successfully applied lens:', currentLens.name);
         })
@@ -118,7 +118,7 @@ export default function SnapCameraView({
           console.error('Error applying lens details:', {
             lensName: currentLens.name,
             snapLensId: currentLens.snapLensId,
-            groupId: currentLens.groupId,
+            groupId: currentLens.snapGroupId,
             errorMessage: error instanceof Error ? error.message : 'Unknown error'
           });
           toast({
