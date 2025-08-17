@@ -517,8 +517,8 @@ export function SnapCameraView({
           </Button>
         </div>
 
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 pt-20 pb-4">
+        {/* Main content area with photo */}
+        <div className="flex-1 flex flex-col items-center justify-center p-6 pt-20 pb-32">
           {/* Photo frame with borders and overlay text */}
           <div className="relative max-w-sm w-full">
             <div className="bg-white rounded-3xl p-3 shadow-2xl">
@@ -558,59 +558,61 @@ export function SnapCameraView({
           </div>
         </div>
 
-        {/* Bottom share section */}
-        <div className="p-6 pt-0">
-          {/* Share to section */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-            <div className="text-white/70 text-sm font-medium mb-3 uppercase tracking-wider">
-              SHARE TO
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <Button
-                size="icon"
-                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
-                onClick={() => {/* Handle X share */}}
-                data-testid="button-share-x"
-              >
-                <XLogo className="h-6 w-6" />
-              </Button>
+        {/* Share section positioned at same height as lens carousel */}
+        <div className="absolute bottom-0 inset-x-0 z-10 pb-12 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
+          <div className="flex justify-center px-4">
+            {/* Share to section */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 max-w-sm w-full">
+              <div className="text-white/70 text-sm font-medium mb-3 uppercase tracking-wider text-center">
+                SHARE TO
+              </div>
               
-              <Button
-                size="icon"
-                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
-                onClick={() => {/* Handle Instagram share */}}
-                data-testid="button-share-instagram"
-              >
-                <InstagramLogo className="h-6 w-6" />
-              </Button>
-              
-              <Button
-                size="icon"
-                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
-                onClick={() => {/* Handle Facebook share */}}
-                data-testid="button-share-facebook"
-              >
-                <FacebookLogo className="h-6 w-6" />
-              </Button>
-              
-              <Button
-                size="icon"
-                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
-                onClick={() => {/* Handle LinkedIn share */}}
-                data-testid="button-share-linkedin"
-              >
-                <LinkedinLogo className="h-6 w-6" />
-              </Button>
-              
-              <Button
-                size="icon"
-                className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
-                onClick={downloadPhoto}
-                data-testid="button-save-photo"
-              >
-                <Download className="h-6 w-6" />
-              </Button>
+              <div className="flex justify-between items-center">
+                <Button
+                  size="icon"
+                  className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                  onClick={() => {/* Handle X share */}}
+                  data-testid="button-share-x"
+                >
+                  <XLogo className="h-6 w-6" />
+                </Button>
+                
+                <Button
+                  size="icon"
+                  className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                  onClick={() => {/* Handle Instagram share */}}
+                  data-testid="button-share-instagram"
+                >
+                  <InstagramLogo className="h-6 w-6" />
+                </Button>
+                
+                <Button
+                  size="icon"
+                  className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                  onClick={() => {/* Handle Facebook share */}}
+                  data-testid="button-share-facebook"
+                >
+                  <FacebookLogo className="h-6 w-6" />
+                </Button>
+                
+                <Button
+                  size="icon"
+                  className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                  onClick={() => {/* Handle LinkedIn share */}}
+                  data-testid="button-share-linkedin"
+                >
+                  <LinkedinLogo className="h-6 w-6" />
+                </Button>
+                
+                <Button
+                  size="icon"
+                  className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
+                  onClick={downloadPhoto}
+                  data-testid="button-save-photo"
+                >
+                  <Download className="h-6 w-6" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
