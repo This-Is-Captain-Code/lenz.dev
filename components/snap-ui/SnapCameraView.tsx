@@ -341,12 +341,7 @@ export default function SnapCameraView({
                 className="w-full h-full object-cover"
               />
               
-              {/* Lens name overlay - top left */}
-              <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                <span className="text-white text-sm font-medium">
-                  {currentLens?.name || 'Lens'}
-                </span>
-              </div>
+
               
               {/* Attribution - bottom left */}
               <div className="absolute bottom-4 left-4 flex items-center gap-2">
