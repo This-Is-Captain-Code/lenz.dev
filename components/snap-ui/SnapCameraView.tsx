@@ -324,10 +324,10 @@ export default function SnapCameraView({
         </div>
         
         {/* Main Photo Container */}
-        <div className="flex-1 px-4 pt-16 pb-2 flex items-center justify-center min-h-0">
-          <div className="relative w-full max-w-xs h-full flex items-center justify-center">
-            {/* Photo with rounded corners and overlay */}
-            <div className="relative w-full max-h-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
+        <div className="flex-1 px-4 pt-20 pb-4 flex items-start justify-center">
+          <div className="relative w-full max-w-sm">
+            {/* Photo with rounded corners and overlay - proper 9:16 aspect ratio */}
+            <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
               <img 
                 src={capturedPhoto} 
                 alt="Captured photo" 
@@ -356,11 +356,8 @@ export default function SnapCameraView({
         </div>
         
         {/* Share Section */}
-        <div className="px-4 pb-6 shrink-0">
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-3">
-            <div className="text-white text-xs font-medium mb-3 text-center">
-              SHARE TO
-            </div>
+        <div className="px-4 pb-8 shrink-0">
+          <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-4">
             
             <div className="flex justify-center gap-4">
               {/* X/Twitter */}
