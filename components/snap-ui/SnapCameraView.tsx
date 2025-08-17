@@ -156,11 +156,6 @@ export default function SnapCameraView({
     try {
       const dataUrl = await captureCanvas(canvasRef.current);
       setCapturedPhoto(dataUrl);
-      
-      toast({
-        title: "Photo Captured!",
-        description: "Your photo has been captured successfully.",
-      });
     } catch (error) {
       console.error('Failed to capture photo:', error);
       toast({
