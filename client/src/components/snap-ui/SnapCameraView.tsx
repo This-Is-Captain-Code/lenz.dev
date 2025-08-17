@@ -559,7 +559,7 @@ export function SnapCameraView({
         </div>
 
         {/* Share section positioned at same height as lens carousel */}
-        <div className="absolute bottom-0 inset-x-0 z-10 pb-16 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
+<div className="absolute bottom-0 inset-x-0 z-10 pb-20 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
           <div className="flex justify-center px-4">
             {/* Share to section */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 border border-white/20 max-w-sm w-full mx-4">
