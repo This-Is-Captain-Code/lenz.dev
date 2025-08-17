@@ -202,11 +202,11 @@ export default function SnapCameraView({
     document.addEventListener('touchend', handleTouchEnd);
   };
 
-  // Auto-hide controls after 3 seconds
+  // Auto-hide controls after 5 seconds (increased from 3)
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowControls(false);
-    }, 3000);
+    }, 5000);
     
     return () => clearTimeout(timer);
   }, [showControls]);
@@ -488,19 +488,21 @@ export default function SnapCameraView({
       {/* Camera Canvas - Full screen */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full"
         style={{ 
-          objectFit: 'cover'
+          objectFit: 'cover',
+          zIndex: 1
         }}
       />
 
-      {/* Top Section - Overlay */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-transparent">
+      {/* Top Section - Overlay - Always visible for now */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-50 bg-transparent"
+           style={{ display: 'flex', opacity: 1, visibility: 'visible' }}>
         {/* Profile Icon */}
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-white/20"
+          className="text-white hover:bg-white/20 bg-black/20 border border-white/30"
           onClick={onOpenSidebar}
         >
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
@@ -510,7 +512,7 @@ export default function SnapCameraView({
         
         {/* Lens Name */}
         {currentLens && (
-          <div className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+          <div className="bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30">
             <span className="text-white text-sm font-medium">{currentLens.name}</span>
           </div>
         )}
@@ -519,7 +521,7 @@ export default function SnapCameraView({
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-white/20"
+          className="text-white hover:bg-white/20 bg-black/20 border border-white/30"
           onClick={() => setShowLensInfo(!showLensInfo)}
         >
           <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
@@ -528,15 +530,21 @@ export default function SnapCameraView({
         </Button>
       </div>
       
-      {/* Bottom Controls - Lens Selector */}
-      <div className="absolute bottom-6 left-0 right-0 z-10 px-4">
-        <div className="flex items-center justify-center">
+      {/* Bottom Controls - Lens Selector - Always visible for now */}
+      <div className="absolute bottom-6 left-0 right-0 z-50 px-4"
+           style={{ display: 'flex', opacity: 1, visibility: 'visible' }}>
+        <div className="flex items-center justify-center w-full">
           <div className="flex items-center gap-3">
             {isLoadingLenses ? (
               // Loading placeholder
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="w-12 h-12 rounded-full bg-gray-700 animate-pulse" />
               ))
+            ) : lenses.length === 0 ? (
+              // No lenses available - show debug info
+              <div className="bg-red-500 text-white px-4 py-2 rounded text-sm">
+                No lenses available
+              </div>
             ) : (
               getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
               <motion.div
@@ -578,7 +586,7 @@ export default function SnapCameraView({
 
       {/* Loading Overlay */}
       {!isCameraReady && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-30">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-60">
           <div className="text-white text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p>Initializing Camera...</p>
@@ -593,7 +601,7 @@ export default function SnapCameraView({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-16 right-4 z-20 bg-black/80 backdrop-blur-sm rounded-lg p-4 max-w-xs"
+            className="absolute top-16 right-4 z-50 bg-black/80 backdrop-blur-sm rounded-lg p-4 max-w-xs"
           >
             <h3 className="text-white font-semibold mb-2">{currentLens.name}</h3>
             <p className="text-gray-300 text-sm mb-2">{currentLens.description}</p>
@@ -603,7 +611,7 @@ export default function SnapCameraView({
       </AnimatePresence>
       
       {/* Camera Flip Button */}
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20">
+      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50">
         <Button
           variant="ghost"
           size="icon"
