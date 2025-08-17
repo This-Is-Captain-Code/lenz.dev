@@ -3,10 +3,11 @@ import { storage } from '../../../../lib/storage';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const lens = await storage.getLens(params.id);
+    const { id } = await params;
+    const lens = await storage.getLens(id);
     if (!lens) {
       return NextResponse.json(
         { error: 'Lens not found' },
