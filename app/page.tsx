@@ -68,9 +68,9 @@ export default function HomePage() {
   };
   
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-black flex flex-col">
+    <div className="fixed inset-0 bg-black flex flex-col overflow-hidden">
       {/* Main camera view */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative w-full h-full">
         <SnapCameraView
           defaultLensId={selectedLens?.id}
           onOpenSidebar={toggleSidebar}

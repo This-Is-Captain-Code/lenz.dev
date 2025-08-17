@@ -295,7 +295,7 @@ export default function SnapCameraView({
   // Captured photo view
   if (capturedPhoto) {
     return (
-      <div className="relative w-full h-[100dvh] bg-black flex flex-col overflow-hidden">
+      <div className="absolute inset-0 bg-black flex flex-col overflow-hidden">
         {/* Top Bar - Matching Home Screen */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 pt-safe z-20">
           {/* Profile Icon */}
@@ -330,8 +330,8 @@ export default function SnapCameraView({
           </Button>
         </div>
         
-        {/* Main Photo Container - Fits between top (safe area) and share section */}
-        <div className="absolute left-0 right-0 flex items-center justify-center px-4" style={{ top: 'max(5rem, calc(env(safe-area-inset-top) + 4rem))', bottom: 'max(7rem, calc(env(safe-area-inset-bottom) + 6rem))' }}>
+        {/* Main Photo Container - Fits between top and share section */}
+        <div className="absolute left-0 right-0 flex items-center justify-center px-4" style={{ top: '4rem', bottom: '6rem' }}>
           <div className="relative w-full h-full max-w-sm mx-auto flex items-center justify-center">
             {/* Photo with constrained size to fit available space while maintaining 9:16 ratio */}
             <div className="relative w-full max-h-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
@@ -357,8 +357,8 @@ export default function SnapCameraView({
           </div>
         </div>
         
-        {/* Share Section - Moved up slightly */}
-        <div className="absolute bottom-4 left-0 right-0 z-10 p-6">
+        {/* Share Section */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 p-4 pb-safe">
           <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto">
             <div className="flex justify-center gap-6">
               {/* X/Twitter */}
@@ -481,7 +481,7 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-[100dvh] bg-black overflow-hidden"
+      className="absolute inset-0 bg-black overflow-hidden"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
