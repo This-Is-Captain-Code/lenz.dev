@@ -5,8 +5,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { User, Lens } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import SnapCameraView from '@/components/snap-ui/SnapCameraView';
-import { SnapSidebar } from '@/components/snap-ui/SnapSidebar';
+import SnapCameraView from '../components/snap-ui/SnapCameraView';
+import { SnapSidebar } from '../components/snap-ui/SnapSidebar';
 
 export default function HomePage() {
   const { toast } = useToast();
@@ -68,12 +68,14 @@ export default function HomePage() {
   };
   
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-black">
-      {/* Main camera view - full screen */}
-      <SnapCameraView
-        defaultLensId={selectedLens?.id}
-        onOpenSidebar={toggleSidebar}
-      />
+    <div className="relative h-[100dvh] w-screen overflow-hidden bg-black flex flex-col">
+      {/* Main camera view */}
+      <div className="flex-1 relative">
+        <SnapCameraView
+          defaultLensId={selectedLens?.id}
+          onOpenSidebar={toggleSidebar}
+        />
+      </div>
       
       {/* Sidebar for lens selection and menu */}
       <SnapSidebar

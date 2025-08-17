@@ -63,26 +63,10 @@
   border-color: hsl(var(--border));
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #000000;
+body {
+  background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-inter), sans-serif;
-  height: 100vh;
-  height: 100dvh;
-  position: fixed;
-  width: 100%;
-}
-
-/* Mobile-specific styles */
-@supports (-webkit-touch-callout: none) {
-  body {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
 }
 
 @layer base {
