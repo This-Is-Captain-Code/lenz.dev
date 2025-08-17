@@ -9,6 +9,10 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
   - Updated storage layer to work with Next.js serverless functions
   - Fixed deployment issues by eliminating Express import errors
   - Preserved all camera functionality and UI design during migration
+- **DEPLOYMENT FIXES**: Resolved Next.js 15 compatibility issues for production deployment
+  - Fixed TypeScript compilation error in API routes by updating params type to Promise
+  - Removed legacy vite.config.ts file that was causing build conflicts
+  - Successfully completed production build with all optimizations
 - Fixed lens application issues by using correct Camera Kit API (`loadLens` instead of `getLens`)
 - Restored original Snapchat-like UI design with:
   - Profile icon (top left), lens name (top center), help icon (top right)
