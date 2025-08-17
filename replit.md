@@ -20,20 +20,20 @@ Preferred communication style: Simple, everyday language.
 # System Architecture
 
 ## Frontend Architecture
-- **Framework**: React 18 with TypeScript for type safety and modern development
-- **Routing**: Wouter for lightweight client-side routing
+- **Framework**: Next.js 14+ with App Router and TypeScript for modern full-stack development
+- **Routing**: Next.js App Router with file-based routing in `app/` directory
 - **UI Components**: Radix UI components with shadcn/ui design system for accessibility and consistency
 - **Styling**: Tailwind CSS with custom CSS variables for theming and responsive design
 - **State Management**: TanStack Query (React Query) for server state management and caching
 - **Camera Integration**: Snap Camera Kit SDK for AR lens functionality and camera access
-- **Build Tool**: Vite for fast development and optimized production builds
+- **Build Tool**: Next.js with built-in optimizations and server-side rendering
 
 ## Backend Architecture
-- **Runtime**: Node.js with Express.js framework for REST API endpoints
+- **Runtime**: Next.js API Routes for serverless backend functionality
 - **Language**: TypeScript for full-stack type safety
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
 - **Data Storage**: In-memory storage with fallback to database for development flexibility
-- **Session Management**: Express sessions for user authentication state
+- **Session Management**: Next.js session handling for user authentication state
 
 ## Database Design
 The schema includes three main entities:
