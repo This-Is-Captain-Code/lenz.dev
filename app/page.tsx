@@ -68,7 +68,7 @@ export default function HomePage() {
   };
   
   return (
-    <div className="h-screen w-screen bg-black flex flex-col overflow-hidden">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-black flex flex-col">
       {/* Main camera view */}
       <div className="flex-1 relative">
         <SnapCameraView

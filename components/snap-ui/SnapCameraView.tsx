@@ -295,9 +295,9 @@ export default function SnapCameraView({
   // Captured photo view
   if (capturedPhoto) {
     return (
-      <div className="relative w-full h-full bg-black flex flex-col overflow-hidden">
+      <div className="relative w-full h-screen bg-black flex flex-col overflow-hidden">
         {/* Top Bar - Matching Home Screen */}
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 pt-safe z-20">
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
           {/* Profile Icon */}
           <Button
             variant="ghost"
@@ -331,7 +331,7 @@ export default function SnapCameraView({
         </div>
         
         {/* Main Photo Container - Fits between top and share section */}
-        <div className="absolute left-0 right-0 flex items-center justify-center px-4" style={{ top: '4rem', bottom: '6rem' }}>
+        <div className="absolute top-20 bottom-28 left-0 right-0 flex items-center justify-center px-4">
           <div className="relative w-full h-full max-w-sm mx-auto flex items-center justify-center">
             {/* Photo with constrained size to fit available space while maintaining 9:16 ratio */}
             <div className="relative w-full max-h-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
@@ -358,7 +358,7 @@ export default function SnapCameraView({
         </div>
         
         {/* Share Section */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 p-4 pb-safe">
+        <div className="absolute bottom-4 left-0 right-0 z-10 p-6">
           <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto">
             <div className="flex justify-center gap-6">
               {/* X/Twitter */}
@@ -481,7 +481,7 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-full bg-black overflow-hidden"
+      className="relative w-full h-screen bg-black overflow-hidden"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
@@ -495,7 +495,7 @@ export default function SnapCameraView({
       />
 
       {/* Top Section - Overlay */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 pt-safe z-20 bg-transparent">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-transparent">
         {/* Profile Icon */}
         <Button
           variant="ghost"
@@ -529,7 +529,7 @@ export default function SnapCameraView({
       </div>
       
       {/* Bottom Controls - Lens Selector */}
-      <div className="absolute left-0 right-0 bottom-0 z-10 p-6 pb-safe">
+      <div className="absolute left-0 right-0 z-10 p-6" style={{ bottom: '20px' }}>
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-4">
             {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
@@ -596,7 +596,7 @@ export default function SnapCameraView({
       </AnimatePresence>
       
       {/* Camera Flip Button */}
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 mr-safe">
+      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20">
         <Button
           variant="ghost"
           size="icon"
