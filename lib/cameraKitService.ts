@@ -96,8 +96,8 @@ export const applyLensToCanvas = async (
     // Use the correct Camera Kit API - loadLens method works!
     console.log(`Creating lens with loadLens method:`, { lensId, groupId });
     
-    // Default to the known working group ID if none provided
-    const effectiveGroupId = groupId || 'b5551368-7881-4a23-a034-a0e757ec85a7';
+    // Use the provided group ID, fallback to config
+    const effectiveGroupId = groupId || '753b00f7-d785-4799-b3b6-09bb39ef53ae';
     
     console.log(`Loading lens ${lensId} from group ${effectiveGroupId}`);
     lens = await cameraKit.lensRepository.loadLens(lensId, effectiveGroupId);
