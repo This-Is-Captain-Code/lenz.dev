@@ -296,12 +296,13 @@ export default function SnapCameraView({
   if (capturedPhoto) {
     return (
       <div className="relative w-full h-screen bg-black flex flex-col">
-        {/* Top Bar with Profile and Help Icons */}
-        <div className="absolute top-0 left-0 right-0 z-20 p-4 flex justify-between items-center">
+        {/* Top Bar - Matching Home Screen */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
+          {/* Profile Icon */}
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20 w-12 h-12 rounded-full"
+            className="text-white hover:bg-white/20"
             onClick={onOpenSidebar}
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
@@ -309,13 +310,23 @@ export default function SnapCameraView({
             </div>
           </Button>
           
+          {/* Lens Name */}
+          {currentLens && (
+            <div className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+              <span className="text-white text-sm font-medium">{currentLens.name}</span>
+            </div>
+          )}
+          
+          {/* Close Button (replacing help button) */}
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20 w-12 h-12 rounded-full"
-            onClick={backToCamera}
+            className="text-white hover:bg-white/20"
+            onClick={() => setCapturedPhoto(null)}
           >
-            <Info className="h-5 w-5" />
+            <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
+              <X className="h-4 w-4 text-white" />
+            </div>
           </Button>
         </div>
         
