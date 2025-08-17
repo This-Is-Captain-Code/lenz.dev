@@ -192,28 +192,12 @@ export function SnapCameraView({
   const cycleToNextLens = () => {
     if (lenses.length === 0) return;
     setCurrentLensIndex(current => (current + 1) % lenses.length);
-    
-    // Update visible lens window if needed
-    const nextIndex = (currentLensIndex + 1) % lenses.length;
-    if (nextIndex >= visibleLensStartIndex + 4) {
-      setVisibleLensStartIndex(current => Math.min(current + 1, lenses.length - 4));
-    } else if (nextIndex < visibleLensStartIndex) {
-      setVisibleLensStartIndex(0);
-    }
   };
   
   // Cycle to previous lens
   const cycleToPreviousLens = () => {
     if (lenses.length === 0) return;
     setCurrentLensIndex(current => (current - 1 + lenses.length) % lenses.length);
-    
-    // Update visible lens window if needed
-    const prevIndex = (currentLensIndex - 1 + lenses.length) % lenses.length;
-    if (prevIndex < visibleLensStartIndex) {
-      setVisibleLensStartIndex(current => Math.max(current - 1, 0));
-    } else if (prevIndex >= visibleLensStartIndex + 4) {
-      setVisibleLensStartIndex(Math.max(0, lenses.length - 4));
-    }
   };
   
   // Handle help toggle
@@ -327,24 +311,52 @@ export function SnapCameraView({
               const isSelected = position === 0; // Center position is selected
               const isCapture = isSelected; // Selected lens acts as capture button
               
-              // Size based on position
-              let sizeClass = 'h-16 w-16'; // Default side lenses
-              if (position === -1 || position === 1) sizeClass = 'h-18 w-18'; // Adjacent to center
-              if (isSelected) sizeClass = 'h-20 w-20'; // Center (selected)
+              // Size and styling based on position
+              let sizeClass = 'w-12 h-12'; // Outermost lenses
+              let iconSizeClass = 'w-6 h-6';
+              if (Math.abs(position) === 1) {
+                sizeClass = 'w-16 h-16'; // Adjacent to center
+                iconSizeClass = 'w-8 h-8';
+              }
+              if (isSelected) {
+                sizeClass = 'w-20 h-20'; // Center (selected)
+                iconSizeClass = 'w-10 h-10';
+              }
               
               // Opacity based on distance from center
-              let opacityClass = 'opacity-40';
-              if (Math.abs(position) === 1) opacityClass = 'opacity-70';
+              let opacityClass = 'opacity-50';
+              if (Math.abs(position) === 1) opacityClass = 'opacity-75';
               if (isSelected) opacityClass = 'opacity-100';
+              
+              // Generate a placeholder image based on lens type
+              const getPlaceholderIcon = () => {
+                if (isCapture) return <Camera className={iconSizeClass} />;
+                
+                // Simple placeholder icons based on lens name/category
+                const lensName = lens.name.toLowerCase();
+                if (lensName.includes('golden') || lensName.includes('vintage')) {
+                  return <div className={`${iconSizeClass} rounded-full bg-gradient-to-br from-yellow-400 to-orange-500`} />;
+                } else if (lensName.includes('cyber') || lensName.includes('tech')) {
+                  return <div className={`${iconSizeClass} rounded-full bg-gradient-to-br from-blue-400 to-purple-500`} />;
+                } else if (lensName.includes('pastel') || lensName.includes('dreamy')) {
+                  return <div className={`${iconSizeClass} rounded-full bg-gradient-to-br from-pink-300 to-purple-300`} />;
+                } else if (lensName.includes('mono') || lensName.includes('black')) {
+                  return <div className={`${iconSizeClass} rounded-full bg-gradient-to-br from-gray-300 to-gray-600`} />;
+                } else if (lensName.includes('aurora') || lensName.includes('glow')) {
+                  return <div className={`${iconSizeClass} rounded-full bg-gradient-to-br from-green-400 to-teal-500`} />;
+                } else {
+                  return <div className={`${iconSizeClass} rounded-full bg-gradient-to-br from-indigo-400 to-pink-400`} />;
+                }
+              };
               
               return (
                 <div key={`${lens.id}-${position}`} className="flex flex-col items-center">
                   <Button
                     size="icon"
-                    className={`${sizeClass} rounded-full text-lg font-bold transition-all duration-300 touch-manipulation ${opacityClass} ${
+                    className={`${sizeClass} rounded-full p-0 transition-all duration-300 touch-manipulation overflow-hidden ${opacityClass} ${
                       isSelected
-                        ? 'bg-white text-black border-4 border-black shadow-2xl scale-110'
-                        : 'bg-white/80 text-black border-2 border-white/60 hover:bg-white hover:scale-105'
+                        ? 'bg-white text-black border-4 border-white shadow-2xl scale-110'
+                        : 'bg-white/90 text-black border-2 border-white/80 hover:bg-white hover:scale-105'
                     }`}
                     onClick={() => {
                       if (isCapture) {
@@ -355,11 +367,9 @@ export function SnapCameraView({
                     }}
                     data-testid={isCapture ? 'button-capture' : `button-lens-${actualIndex + 1}`}
                   >
-                    {isCapture ? (
-                      <Camera className="h-8 w-8" />
-                    ) : (
-                      <span>{actualIndex + 1}</span>
-                    )}
+                    <div className="w-full h-full flex items-center justify-center">
+                      {getPlaceholderIcon()}
+                    </div>
                   </Button>
                   
                   {/* Lens name below selected lens */}
