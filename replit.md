@@ -3,6 +3,15 @@
 This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
 
 ## Recent Changes (August 17, 2025)
+- **REWARD DISTRIBUTION SYSTEM**: Implemented comprehensive CDP-based weekly reward system
+  - Added lens interaction tracking (apply, capture, share, download) with weighted scoring
+  - Created PostgreSQL schema for interactions, distributions, and creator rewards
+  - Built reward calculation engine with weighted distribution based on creator engagement
+  - Integrated CDP (Coinbase Developer Platform) for automated USDC reward payments
+  - Added interaction tracking to camera component for all lens activities
+  - Created admin dashboard for viewing and managing reward distributions
+  - Implemented APIs for interaction tracking, reward distribution, and status monitoring
+  - Weekly reward pool of $1000 USDC distributed based on weighted creator interactions
 - **WEB3 INTEGRATION**: Added MiniKit (OnchainKit) for Web3 functionality
   - Installed @coinbase/onchainkit package for Farcaster and blockchain integration
   - Created MiniKitProvider wrapper for Web3 wallet connectivity

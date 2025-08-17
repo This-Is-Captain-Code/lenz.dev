@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMiniKit, useComposeCast } from '@coinbase/onchainkit/minikit';
 import { LenzWalletButton } from '../lenz-wallet/LenzWalletButton';
+import { useInteractionTracking } from '../../hooks/useInteractionTracking';
 import { LenzNftMinter } from '../lenz-wallet/LenzNftMinter';
 
 interface SnapCameraViewProps {
@@ -31,6 +32,7 @@ export default function SnapCameraView({
   const { toast } = useToast();
   const { isFrameReady } = useMiniKit();
   const { composeCast } = useComposeCast();
+  const { trackInteraction } = useInteractionTracking();
   
   // State
   const [isCameraReady, setIsCameraReady] = useState(false);
@@ -118,6 +120,16 @@ export default function SnapCameraView({
       applyLensToCanvas(canvasRef.current, currentLens.snapLensId, currentLens.snapGroupId)
         .then(() => {
           console.log('Successfully applied lens:', currentLens.name);
+          // Track lens application interaction
+          trackInteraction({
+            lensId: currentLens.id,
+            interactionType: 'apply',
+            metadata: JSON.stringify({
+              lensName: currentLens.name,
+              creator: currentLens.creator,
+              facingMode
+            })
+          });
         })
         .catch((error) => {
           console.error('Failed to apply lens:', error);
@@ -163,6 +175,20 @@ export default function SnapCameraView({
     try {
       const dataUrl = await captureCanvas(canvasRef.current, facingMode);
       setCapturedPhoto(dataUrl);
+      
+      // Track photo capture interaction
+      if (currentLens) {
+        trackInteraction({
+          lensId: currentLens.id,
+          interactionType: 'capture',
+          metadata: JSON.stringify({
+            lensName: currentLens.name,
+            creator: currentLens.creator,
+            facingMode,
+            timestamp: new Date().toISOString()
+          })
+        });
+      }
     } catch (error) {
       console.error('Failed to capture photo:', error);
       toast({
@@ -237,6 +263,19 @@ export default function SnapCameraView({
         title: "Photo Downloaded",
         description: "Your photo has been saved to your device.",
       });
+      
+      // Track download interaction
+      if (currentLens) {
+        trackInteraction({
+          lensId: currentLens.id,
+          interactionType: 'download',
+          metadata: JSON.stringify({
+            lensName: currentLens.name,
+            creator: currentLens.creator,
+            timestamp: new Date().toISOString()
+          })
+        });
+      }
     }
   };
 
@@ -343,6 +382,20 @@ export default function SnapCameraView({
         title: "Shared to Farcaster!",
         description: "Your photo has been shared to Farcaster with image copied to clipboard.",
       });
+      
+      // Track share interaction
+      if (currentLens) {
+        trackInteraction({
+          lensId: currentLens.id,
+          interactionType: 'share',
+          metadata: JSON.stringify({
+            lensName: currentLens.name,
+            creator: currentLens.creator,
+            platform: 'farcaster',
+            timestamp: new Date().toISOString()
+          })
+        });
+      }
     } catch (error) {
       console.error('Failed to share to Farcaster:', error);
       toast({
