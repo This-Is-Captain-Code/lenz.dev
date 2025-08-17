@@ -12,6 +12,14 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
   - Created admin dashboard for viewing and managing reward distributions
   - Implemented APIs for interaction tracking, reward distribution, and status monitoring
   - Weekly reward pool of $1000 USDC distributed based on weighted creator interactions
+- **SQUIDROUTER BRIDGE INTEGRATION**: Added cross-chain token bridging from Saga to Base
+  - Integrated @0xsquid/sdk for seamless cross-chain token bridging functionality
+  - Created SquidBridge service for bridging LENZ tokens from Saga chainlet to Base USDC
+  - Built comprehensive BridgeModal component with fee estimation and progress tracking
+  - Added bridge transaction status monitoring with real-time progress updates
+  - Implemented bridge APIs for route calculation, fee estimation, and status checking
+  - Enhanced dashboard with bridge functionality replacing swap button
+  - Enables users to move LENZ tokens to Base chain for CDP reward distributions
 - **WEB3 INTEGRATION**: Added MiniKit (OnchainKit) for Web3 functionality
   - Installed @coinbase/onchainkit package for Farcaster and blockchain integration
   - Created MiniKitProvider wrapper for Web3 wallet connectivity

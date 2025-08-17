@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@0xsquid/sdk": "^2.10.1",
     "@coinbase/coinbase-sdk": "^0.25.0",
     "@coinbase/onchainkit": "^0.38.19",
     "@hookform/resolvers": "^3.10.0",
@@ -46,6 +47,7 @@
     "@radix-ui/react-tooltip": "^1.2.0",
     "@snap/camera-kit": "^1.8.0",
     "@tanstack/react-query": "^5.60.5",
+    "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

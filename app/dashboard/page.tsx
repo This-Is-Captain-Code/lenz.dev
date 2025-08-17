@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { ArrowLeft, Wallet, PaperPlaneTilt, ArrowsClockwise, CurrencyDollar, User, Coins } from '@phosphor-icons/react';
+import { BridgeModal } from '../../components/bridge/BridgeModal';
 import { useLenzWallet } from '../../providers/LenzWalletProvider';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { LenzWalletModal } from '../../components/lenz-wallet/LenzWalletModal';
@@ -240,13 +241,15 @@ export default function DashboardPage() {
           <span className="text-xs">Send</span>
         </Button>
         
-        <Button
-          variant="outline"
-          className="flex flex-col items-center gap-2 h-20 bg-white/10 border-white/20 hover:bg-white/20"
-        >
-          <ArrowsClockwise size={24} />
-          <span className="text-xs">Swap</span>
-        </Button>
+        <BridgeModal>
+          <Button
+            variant="outline"
+            className="flex flex-col items-center gap-2 h-20 bg-white/10 border-white/20 hover:bg-white/20"
+          >
+            <ArrowsClockwise size={24} />
+            <span className="text-xs">Bridge</span>
+          </Button>
+        </BridgeModal>
         
         <Button
           variant="outline"
