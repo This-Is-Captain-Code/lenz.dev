@@ -361,7 +361,7 @@ export function SnapCameraView({
     const carouselLenses = getCarouselLenses();
     
     return (
-      <div className="absolute bottom-0 inset-x-0 z-10 pb-12 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
+      <div className="absolute bottom-0 inset-x-0 z-10 pb-16 bg-gradient-to-t from-black/50 via-black/20 to-transparent">
         {/* Centered lens carousel */}
         <div className="flex justify-center items-center px-4">
           <div className="flex items-center justify-center space-x-4">
