@@ -441,74 +441,107 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-screen bg-black overflow-hidden"
+      className="relative w-full h-screen bg-black overflow-hidden flex flex-col"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
-      {/* Camera Canvas */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      {/* Top Section - Always visible */}
+      <div className="flex items-center justify-between p-4 z-20 bg-transparent">
+        {/* Profile Icon */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/20"
+          onClick={onOpenSidebar}
+        >
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+            <UserIcon className="h-4 w-4 text-white" />
+          </div>
+        </Button>
+        
+        {/* Lens Name */}
+        {currentLens && (
+          <div className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+            <span className="text-white text-sm font-medium">{currentLens.name}</span>
+          </div>
+        )}
+        
+        {/* Help Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/20"
+          onClick={() => setShowLensInfo(!showLensInfo)}
+        >
+          <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
+            <span className="text-white text-sm font-bold">?</span>
+          </div>
+        </Button>
+      </div>
+
+      {/* Middle Section - Camera Canvas */}
+      <div className="flex-1 relative">
         <canvas
           ref={canvasRef}
-          className="w-full h-full max-w-full max-h-full"
+          className="w-full h-full"
           style={{ 
-            aspectRatio: '9/16',
-            objectFit: 'contain'
+            objectFit: 'cover'
           }}
         />
       </div>
       
+      {/* Bottom Section - Lens Carousel */}
+      <div className="p-4 z-20 bg-transparent">
+        <div className="flex items-center justify-center space-x-4">
+          {lenses.map((lens, index) => {
+            const isActive = currentLens?.id === lens.id;
+            const isCenter = index === Math.floor(lenses.length / 2);
+            
+            return (
+              <motion.button
+                key={lens.id}
+                className={`
+                  relative rounded-full transition-all duration-300
+                  ${isActive && isCenter 
+                    ? 'w-20 h-20 bg-white border-4 border-white' 
+                    : 'w-12 h-12 bg-white/20 border-2 border-white/40'
+                  }
+                  ${!isActive ? 'hover:bg-white/30' : ''}
+                `}
+                onClick={() => {
+                  if (isActive && isCenter) {
+                    handleCapture();
+                  } else {
+                    const lensIndex = lenses.findIndex(l => l.id === lens.id);
+                    setCurrentLensIndex(lensIndex);
+                  }
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isActive && isCenter && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Camera className="h-8 w-8 text-black" />
+                  </div>
+                )}
+                {(!isActive || !isCenter) && (
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 opacity-60" />
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Loading Overlay */}
       {!isCameraReady && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-30">
           <div className="text-white text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p>Initializing Camera...</p>
           </div>
         </div>
       )}
-      
-      {/* Top Controls */}
-      <AnimatePresence>
-        {showControls && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-0 left-0 right-0 z-10 p-4"
-          >
-            <div className="flex items-center justify-between">
-              {/* Profile Icon */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20"
-                onClick={onOpenSidebar}
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                  <UserIcon className="h-4 w-4 text-white" />
-                </div>
-              </Button>
-              
-              {/* Lens Name */}
-              {currentLens && (
-                <div className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2">
-                  <span className="text-white text-sm font-medium">{currentLens.name}</span>
-                </div>
-              )}
-              
-              {/* Info Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20"
-                onClick={() => setShowLensInfo(!showLensInfo)}
-              >
-                <Info className="h-5 w-5" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
       
       {/* Lens Info Panel */}
       <AnimatePresence>
@@ -526,88 +559,19 @@ export default function SnapCameraView({
         )}
       </AnimatePresence>
       
-      {/* Side Controls */}
-      <AnimatePresence>
-        {showControls && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 flex flex-col gap-4"
-          >
-            {/* Camera Switch */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20 backdrop-blur-sm"
-              onClick={switchCamera}
-            >
-              <Repeat className="h-5 w-5" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      {/* Bottom Controls - Lens Selector */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
-        <div className="flex items-center justify-center">
-          <div className="flex items-center gap-4">
-            {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
-              <motion.div
-                key={uniqueKey}
-                className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
-                animate={{
-                  scale: offset === 0 ? 1.2 : 0.8,
-                  opacity: Math.abs(offset) <= 1 ? 1 : 0.5,
-                  y: swipeDirection && Math.abs(offset) <= 1 ? swipeProgress * (swipeDirection === 'up' ? -20 : 20) : 0
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              >
-                <Button
-                  variant={offset === 0 ? "default" : "secondary"}
-                  size="lg"
-                  className={`w-16 h-16 rounded-full p-0 border-2 ${
-                    offset === 0 
-                      ? 'border-white bg-white text-black hover:bg-gray-100' 
-                      : 'border-gray-400 bg-gray-800 text-white hover:bg-gray-700'
-                  }`}
-                  onClick={offset === 0 ? handleCapture : () => setCurrentLensIndex(index)}
-                >
-                  {offset === 0 ? (
-                    <Camera className="h-6 w-6" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                      <span className="text-xs font-bold text-white">
-                        {lens?.name?.charAt(0) || '?'}
-                      </span>
-                    </div>
-                  )}
-                </Button>
-                
-                {/* Lens Name Label */}
-                {Math.abs(offset) <= 1 && lens && (
-                  <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                    <span className="text-white text-xs text-center block whitespace-nowrap">
-                      {lens.name}
-                    </span>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Swipe Indicator */}
-        {lenses.length > 1 && (
-          <div className="flex justify-center mt-6">
-            <div className="flex items-center gap-2 text-white/60">
-              <ChevronUp className="h-4 w-4" />
-              <span className="text-xs">Swipe to change lens</span>
-              <ChevronUp className="h-4 w-4 rotate-180" />
-            </div>
-          </div>
-        )}
+      {/* Camera Flip Button */}
+      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/20 backdrop-blur-sm bg-black/20 rounded-full"
+          onClick={switchCamera}
+        >
+          <Repeat className="h-5 w-5" />
+        </Button>
       </div>
+      
+
     </div>
   );
 }
