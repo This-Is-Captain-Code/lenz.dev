@@ -20,8 +20,8 @@ const loadCameraKit = async () => {
 };
 
 // Simple implementation directly from the Snap Camera Kit tutorial
-let cameraKit: CameraKit | null = null;
-let session: CameraKitSession | null = null;
+let cameraKit: any = null;
+let session: any = null;
 let currentLensId: string | null = null;
 
 interface InitOptions {

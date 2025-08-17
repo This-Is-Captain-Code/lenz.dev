@@ -237,7 +237,7 @@ export default function SnapCameraView({
   const shareToTwitter = async () => {
     if (capturedPhoto) {
       // Create a text for the tweet
-      const tweetText = "Captured using @lenzdotdev";
+      const tweetText = "Captured using lenzdotdev";
       
       // Try to copy image to clipboard first
       const copied = await copyImageToClipboard(capturedPhoto);
