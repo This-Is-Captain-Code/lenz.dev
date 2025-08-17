@@ -324,8 +324,8 @@ export default function SnapCameraView({
         </div>
         
         {/* Main Photo Container */}
-        <div className="flex-1 px-4 pt-20 pb-4 flex items-start justify-center">
-          <div className="relative w-full max-w-sm">
+        <div className="flex-1 px-6 pt-20 pb-2 flex items-start justify-center overflow-hidden">
+          <div className="relative w-full max-w-xs">
             {/* Photo with rounded corners and overlay - proper 9:16 aspect ratio */}
             <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
               <img 
@@ -355,16 +355,16 @@ export default function SnapCameraView({
           </div>
         </div>
         
-        {/* Share Section */}
-        <div className="px-4 pb-8 shrink-0">
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-4">
+        {/* Share Section - Fixed at bottom */}
+        <div className="px-6 pb-6 shrink-0">
+          <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-3">
             
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-3">
               {/* X/Twitter */}
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20 w-10 h-10"
+                className="text-white hover:bg-white/20 w-9 h-9"
                 onClick={shareToTwitter}
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -376,7 +376,7 @@ export default function SnapCameraView({
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20 w-10 h-10"
+                className="text-white hover:bg-white/20 w-9 h-9"
                 onClick={() => {
                   navigator.clipboard.writeText('Captured using @lenzdotdev').then(() => {
                     toast({
@@ -396,7 +396,7 @@ export default function SnapCameraView({
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20 w-10 h-10"
+                className="text-white hover:bg-white/20 w-9 h-9"
                 onClick={() => {
                   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent('Captured using @lenzdotdev')}`;
                   window.open(fbUrl, '_blank');
@@ -411,7 +411,7 @@ export default function SnapCameraView({
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20 w-10 h-10"
+                className="text-white hover:bg-white/20 w-9 h-9"
                 onClick={() => {
                   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
                   window.open(linkedinUrl, '_blank');
@@ -426,7 +426,7 @@ export default function SnapCameraView({
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20 w-10 h-10"
+                className="text-white hover:bg-white/20 w-9 h-9"
                 onClick={() => {
                   const redditUrl = `https://www.reddit.com/submit?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent('Captured using @lenzdotdev')}`;
                   window.open(redditUrl, '_blank');
