@@ -1,0 +1,86 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+/// @notice Minimal ERC-20 interface needed by this contract
+interface IERC20 {
+    function transfer(address to, uint256 value) external returns (bool);
+    function transferFrom(address from,address to,uint256 value) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+    function allowance(address owner, address spender) external view returns (uint256);
+}
+
+/// @notice Minimal Ownable implementation
+abstract contract Ownable {
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    address public owner;
+    constructor() {
+        owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
+    }
+    modifier onlyOwner() {
+        require(msg.sender == owner, "NOT_OWNER");
+        _;
+    }
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "ZERO_ADDR");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
+    }
+}
+
+/// @notice Minimal Reentrancy guard
+abstract contract ReentrancyGuard {
+    uint256 private _entered;
+    constructor() { _entered = 1; }
+    modifier nonReentrant() {
+        require(_entered == 1, "REENTRANT");
+        _entered = 2;
+        _;
+        _entered = 1;
+    }
+}
+
+/**
+ * @title LenzLikeAndGames
+ * @notice Like-to-tip + simple staking mini-games contract.
+ * - token == address(0) => native coin mode (e.g., LENZ as native)
+ * - token != address(0) => ERC20 token mode
+ */
+contract LenzLikeAndGames is Ownable, ReentrancyGuard {
+    address public immutable token; // zero for native
+
+    // ===== Events =====
+    event LikedNative(address indexed from, address indexed to, uint256 amount);
+    event LikedERC20(address indexed from, address indexed to, uint256 amount);
+    event GameCreated(uint256 indexed gameId, address indexed creator, uint256 requiredStake, bool isERC20);
+    event Joined(uint256 indexed gameId, address indexed player, uint256 amount);
+    event OwnerToppedUp(uint256 indexed gameId, uint256 amount);
+    event Resolved(uint256 indexed gameId, address[] winners, uint256 totalPaid);
+    event OwnerWithdrawn(uint256 indexed gameId, uint256 amount);
+
+    // ===== Game storage =====
+    struct Game {
+        address creator;
+        uint256 requiredStake;     // fixed buy-in per player
+        uint256 pool;              // total tokens/coin held by contract for this game
+        bool resolved;
+        bool isERC20;
+        address[] players;
+        mapping(address => uint256) stakeOf; // amount each player put in
+    }
+
+    uint256 public nextGameId;
+    mapping(uint256 => Game) private games;
+
+    // ===== Constructor =====
+    constructor(address _token) Ownable() ReentrancyGuard() {
+        token = _token;
+    }
+
+    // ===== Like-to-tip =====
+
+    /// @notice Tip with native coin. Only when token == address(0).
+    function likeNative(address to) external payable nonReentrant {
+        require(token == address(0), "NATIVE_ONLY");
+        require(to != address(0), "BAD_TO");
+        require(msg.value > 0,
