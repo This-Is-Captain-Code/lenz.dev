@@ -330,8 +330,8 @@ export default function SnapCameraView({
           </Button>
         </div>
         
-        {/* Main Photo Container - Fits between top (80px) and share section (110px) */}
-        <div className="absolute top-20 bottom-28 left-0 right-0 flex items-center justify-center px-4">
+        {/* Main Photo Container - Fits between top (safe area) and share section */}
+        <div className="absolute left-0 right-0 flex items-center justify-center px-4" style={{ top: 'max(5rem, calc(env(safe-area-inset-top) + 4rem))', bottom: 'max(7rem, calc(env(safe-area-inset-bottom) + 6rem))' }}>
           <div className="relative w-full h-full max-w-sm mx-auto flex items-center justify-center">
             {/* Photo with constrained size to fit available space while maintaining 9:16 ratio */}
             <div className="relative w-full max-h-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
