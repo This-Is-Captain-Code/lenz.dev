@@ -1,11 +1,13 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Lens, User } from '../../shared/schema';
-import { apiRequest } from '../../lib/queryClient';
-import { applyLensToCanvas, captureCanvas, initializeCamera } from '../../lib/cameraKitService';
-import { useToast } from '../../hooks/use-toast';
+import { Lens, User } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
+import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
+import { useToast } from '@/hooks/use-toast';
 import { Camera, Repeat, Sparkles, Download, Info, X, ChevronUp } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SnapCameraViewProps {

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Direct implementation from Snap Camera Kit tutorial
  * https://docs.snap.com/camera-kit/guides/tutorials/web/create-a-web-project
@@ -5,21 +7,6 @@
 import { SNAP_API_TOKEN } from './config';
 
 // Dynamic imports for client-side only
-let bootstrapCameraKit: any;
-let CameraKit: any;
-let CameraKitSession: any;
-
-// Load Camera Kit only on client side
-const loadCameraKit = async () => {
-  if (typeof window !== 'undefined' && !bootstrapCameraKit) {
-    const cameraKitModule = await import('@snap/camera-kit');
-    bootstrapCameraKit = cameraKitModule.bootstrapCameraKit;
-    CameraKit = cameraKitModule.CameraKit;
-    CameraKitSession = cameraKitModule.CameraKitSession;
-  }
-};
-
-// Simple implementation directly from the Snap Camera Kit tutorial
 let cameraKit: any = null;
 let session: any = null;
 let currentLensId: string | null = null;
@@ -33,16 +20,20 @@ interface InitOptions {
  * Initialize Camera Kit with the canvas and API token
  */
 export const initializeCamera = async ({ canvas, facingMode }: InitOptions): Promise<MediaStream> => {
+  if (typeof window === 'undefined') {
+    throw new Error('Camera Kit can only be initialized on the client side');
+  }
+
   try {
-    console.log('Initializing basic Camera Kit setup...');
+    console.log('Initializing Camera Kit...');
     
-    // Load Camera Kit module
-    await loadCameraKit();
+    // Dynamic import for client-side only
+    const { bootstrapCameraKit } = await import('@snap/camera-kit');
     
     // Check for custom API key first
     const apiToken = (window as any).SNAP_CUSTOM_API_KEY || SNAP_API_TOKEN;
     
-    // Bootstrap Camera Kit with appropriate API token
+    // Bootstrap Camera Kit
     cameraKit = await bootstrapCameraKit({
       apiToken
     });

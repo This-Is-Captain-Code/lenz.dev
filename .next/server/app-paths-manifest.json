@@ -1,3 +1,4 @@
 {
+  "/api/lenses/route": "app/api/lenses/route.js",
   "/page": "app/page.js"
 }
