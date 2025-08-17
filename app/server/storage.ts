@@ -137,8 +137,13 @@ export class MemStorage implements IStorage {
   async createLens(insertLens: InsertLens): Promise<Lens> {
     const id = randomUUID();
     const lens: Lens = { 
-      ...insertLens, 
+      ...insertLens,
       id,
+      description: insertLens.description ?? null,
+      downloads: insertLens.downloads ?? null,
+      snapGroupId: insertLens.snapGroupId ?? null,
+      category: insertLens.category ?? null,
+      isActive: insertLens.isActive ?? null,
       createdAt: new Date()
     };
     this.lenses.set(id, lens);

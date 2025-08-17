@@ -82,7 +82,7 @@ export default function HomePage() {
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onSelectLens={handleSelectLens}
-        user={user}
+        user={user ?? null}
         onLogin={handleLogin}
         onLogout={handleLogout}
       />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, RefObject } from 'react';
-import { initializeCamera, applyLensToCanvas, captureCanvas, cleanupCameraKit } from '../lib/cameraKitService';
+import { initializeCamera, applyLensToCanvas, captureCanvas, cleanupCamera } from '../lib/cameraKitService';
 
 type CameraStatus = 'loading' | 'permission_needed' | 'ready' | 'error';
 
@@ -41,7 +41,7 @@ export const useCameraKit = (
         
         if (!mounted) {
           stream.getTracks().forEach(track => track.stop());
-          await cleanupCameraKit();
+          await cleanupCamera();
           return;
         }
         
@@ -63,7 +63,7 @@ export const useCameraKit = (
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
-      cleanupCameraKit().catch(err => {
+      cleanupCamera().catch(err => {
         console.warn('Error during Camera Kit cleanup:', err);
       });
     };
@@ -96,7 +96,7 @@ export const useCameraKit = (
       streamRef.current.getTracks().forEach(track => track.stop());
     }
     
-    await cleanupCameraKit();
+    await cleanupCamera();
     setIsFrontCamera(prev => !prev);
   };
 
@@ -140,13 +140,13 @@ export const useCameraKit = (
   };
 
   // Capture photo from canvas
-  const capturePhoto = (): string | null => {
+  const capturePhoto = async (): Promise<string | null> => {
     if (status !== 'ready' || !canvasRef.current) {
       return null;
     }
     
     try {
-      return captureCanvas(canvasRef.current);
+      return await captureCanvas(canvasRef.current);
     } catch (err) {
       console.error('Failed to capture photo:', err);
       setError(err instanceof Error ? err.message : 'Failed to capture photo');
