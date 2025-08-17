@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Lens, User } from '@shared/schema';
 import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Question, User as UserIcon, X, Download } from '@phosphor-icons/react';
+import { Camera, Question, User as UserIcon, X, Download, ArrowLeft, Share, Heart, ChatCircle, BookmarkSimple, DotsThree } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -476,40 +476,137 @@ export function SnapCameraView({
     );
   };
   
-  // Render photo capture view
+  // Render photo capture view with new Snapchat-like design
   const renderCapturedPhotoView = () => {
     if (!capturedPhoto) return null;
     
     return (
-      <div className="absolute inset-0 bg-black flex flex-col">
-        <div className="flex-1 relative">
-          <img 
-            src={capturedPhoto} 
-            alt="Captured photo" 
-            className="absolute inset-0 w-full h-full object-contain"
-            data-testid="img-captured-photo"
-          />
-        </div>
-        
-        <div className="p-6 flex justify-between">
+      <div className="absolute inset-0 bg-black">
+        {/* Top bar - same as camera view */}
+        <div className="absolute top-0 inset-x-0 z-10 flex items-center justify-between p-4 pt-4 bg-gradient-to-b from-black/30 to-transparent">
+          {/* Profile Icon - Top Left */}
           <Button 
-            variant="outline" 
-            className="rounded-full px-4 bg-white/20 text-white border-white/30 hover:bg-white/30 hover:text-white"
-            onClick={backToCamera}
-            data-testid="button-discard-photo"
+            size="icon" 
+            className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
+            onClick={onOpenSidebar}
+            data-testid="button-profile-share"
           >
-            <X className="mr-2 h-4 w-4" />
-            Discard
+            <UserIcon className="h-6 w-6" />
           </Button>
           
+          {/* Filter Name - Top Center */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <div className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
+              {lenses[currentLensIndex]?.name || 'No Lens'}
+            </div>
+          </div>
+          
+          {/* Help Icon - Top Right */}
           <Button 
-            className="rounded-full px-4"
-            onClick={downloadPhoto}
-            data-testid="button-save-photo"
+            size="icon" 
+            className="h-12 w-12 rounded-full bg-white text-black hover:bg-white/90"
+            onClick={toggleHelp}
+            data-testid="button-help-share"
           >
-            <Download className="mr-2 h-4 w-4" />
-            Save
+            <Question className="h-6 w-6" />
           </Button>
+        </div>
+        
+        {/* Captured photo - full screen */}
+        <img 
+          src={capturedPhoto} 
+          alt="Captured photo" 
+          className="absolute inset-0 w-full h-full object-cover"
+          data-testid="img-captured-photo"
+        />
+        
+        {/* Bottom sharing controls */}
+        <div className="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/50 to-transparent">
+          <div className="flex items-center justify-center space-x-4">
+            {/* Share option 1 */}
+            <Button
+              size="icon"
+              className="h-16 w-16 rounded-full bg-white text-black hover:bg-white/90 flex items-center justify-center text-lg font-semibold"
+              onClick={() => {
+                toast({
+                  title: "Share to Story",
+                  description: "Photo shared to your story!"
+                });
+              }}
+              data-testid="button-share-1"
+            >
+              1
+            </Button>
+            
+            {/* Share option 2 */}
+            <Button
+              size="icon"
+              className="h-16 w-16 rounded-full bg-white text-black hover:bg-white/90 flex items-center justify-center text-lg font-semibold"
+              onClick={() => {
+                toast({
+                  title: "Send to Friends",
+                  description: "Opening friends list..."
+                });
+              }}
+              data-testid="button-share-2"
+            >
+              2
+            </Button>
+            
+            {/* Center action button - Save/Download */}
+            <Button
+              size="icon"
+              className="h-20 w-20 rounded-full bg-white text-black hover:bg-white/90 border-4 border-white shadow-2xl flex items-center justify-center"
+              onClick={downloadPhoto}
+              data-testid="button-save-center"
+            >
+              <Download className="h-8 w-8" />
+            </Button>
+            
+            {/* Share option 3 */}
+            <Button
+              size="icon"
+              className="h-16 w-16 rounded-full bg-white text-black hover:bg-white/90 flex items-center justify-center text-lg font-semibold"
+              onClick={() => {
+                toast({
+                  title: "Save to Memories",
+                  description: "Photo saved to memories!"
+                });
+              }}
+              data-testid="button-share-3"
+            >
+              3
+            </Button>
+            
+            {/* Share option 4 */}
+            <Button
+              size="icon"
+              className="h-16 w-16 rounded-full bg-white text-black hover:bg-white/90 flex items-center justify-center text-lg font-semibold"
+              onClick={() => {
+                toast({
+                  title: "More Options",
+                  description: "Opening sharing options..."
+                });
+              }}
+              data-testid="button-share-4"
+            >
+              4
+            </Button>
+          </div>
+          
+          {/* Back to camera button - subtle */}
+          <div className="flex justify-center mt-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-white hover:bg-white/10"
+              onClick={backToCamera}
+              data-testid="button-back-camera"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Camera
+            </Button>
+          </div>
         </div>
       </div>
     );
