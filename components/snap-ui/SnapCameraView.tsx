@@ -481,17 +481,16 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-screen bg-black overflow-hidden"
+      className="relative w-full h-full bg-black overflow-hidden"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
-      {/* Camera Canvas - Moved Up */}
+      {/* Camera Canvas - Full screen */}
       <canvas
         ref={canvasRef}
-        className="absolute w-full h-full"
+        className="absolute inset-0 w-full h-full object-cover"
         style={{ 
-          objectFit: 'contain',
-          top: '-20px'
+          objectFit: 'cover'
         }}
       />
 
@@ -530,10 +529,16 @@ export default function SnapCameraView({
       </div>
       
       {/* Bottom Controls - Lens Selector */}
-      <div className="absolute left-0 right-0 z-10 p-6" style={{ bottom: '20px' }}>
+      <div className="absolute bottom-6 left-0 right-0 z-10 px-4">
         <div className="flex items-center justify-center">
-          <div className="flex items-center gap-4">
-            {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
+          <div className="flex items-center gap-3">
+            {isLoadingLenses ? (
+              // Loading placeholder
+              Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="w-12 h-12 rounded-full bg-gray-700 animate-pulse" />
+              ))
+            ) : (
+              getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
               <motion.div
                 key={uniqueKey}
                 className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
@@ -547,17 +552,17 @@ export default function SnapCameraView({
                 <Button
                   variant={offset === 0 ? "default" : "secondary"}
                   size="lg"
-                  className={`w-16 h-16 rounded-full p-0 border-2 ${
+                  className={`w-14 h-14 rounded-full p-0 border-2 ${
                     offset === 0 
-                      ? 'border-white bg-white text-black hover:bg-gray-100' 
-                      : 'border-gray-400 bg-gray-800 text-white hover:bg-gray-700'
+                      ? 'border-white bg-white text-black hover:bg-gray-100 shadow-lg' 
+                      : 'border-gray-400 bg-gray-800/80 text-white hover:bg-gray-700'
                   }`}
                   onClick={offset === 0 ? handleCapture : () => setCurrentLensIndex(index)}
                 >
                   {offset === 0 ? (
-                    <Camera className="h-6 w-6" />
+                    <Camera className="h-5 w-5" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
                       <span className="text-xs font-bold text-white">
                         {lens?.name?.charAt(0) || '?'}
                       </span>
@@ -565,7 +570,8 @@ export default function SnapCameraView({
                   )}
                 </Button>
               </motion.div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
