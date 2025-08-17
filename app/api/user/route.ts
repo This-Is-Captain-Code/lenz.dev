@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // For now, return a simple mock user since we're not implementing full auth in this migration
-  return NextResponse.json({
-    id: '1',
-    username: 'demo_user',
-    isAuthenticated: true
-  });
+  try {
+    // Return null for guest user (matching the Express implementation)
+    return NextResponse.json(null);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch user' },
+      { status: 500 }
+    );
+  }
 }

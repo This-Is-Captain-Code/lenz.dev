@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"lib/cameraKitService.ts -> @snap/camera-kit":{"id":4820,"files":["static/chunks/820.a37f0eb0a3440e13.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{\"lib/cameraKitService.ts -> @snap/camera-kit\":{\"id\":\"lib/cameraKitService.ts -> @snap/camera-kit\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_snap_camera-kit_dist_index_js.js\"]}}"

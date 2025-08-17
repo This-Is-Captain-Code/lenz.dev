@@ -2,7 +2,22 @@
 
 This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
 
-## Recent Changes (January 17, 2025)
+## Recent Changes (August 17, 2025)
+- **DEPLOYMENT FIX**: Successfully converted hybrid Express+Next.js setup to pure Next.js application
+- Fixed TypeScript build issues by adding missing Express type declarations
+- Removed experimental esmExternals configuration that was causing deployment warnings
+- Migrated all Express API routes to Next.js API routes:
+  - `/api/lenses` - GET/POST for lens management
+  - `/api/lenses/[id]` - GET specific lens details
+  - `/api/my-lenses` - GET/POST user lens collection
+  - `/api/user` - GET current user data
+  - `/api/logout` - POST logout functionality
+- Moved storage layer from server/ to app/lib/ for Next.js compatibility
+- Removed legacy Express server files and client/ directory
+- Fixed Next.js 15 async params warning in dynamic routes
+- Application now ready for deployment with pure Next.js architecture
+
+## Previous Changes (January 17, 2025)
 - Successfully migrated from Express+Vite to Next.js App Router while maintaining full camera functionality
 - Fixed lens application issues by using correct Camera Kit API (`loadLens` instead of `getLens`)
 - Restored original Snapchat-like UI design with:
@@ -39,11 +54,12 @@ Preferred communication style: Simple, everyday language.
 - **Build Tool**: Next.js with built-in optimizations and server-side rendering
 
 ## Backend Architecture
-- **Runtime**: Next.js API Routes for serverless backend functionality
+- **Runtime**: Pure Next.js API Routes for serverless backend functionality
 - **Language**: TypeScript for full-stack type safety
-- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Data Storage**: In-memory storage with fallback to database for development flexibility
-- **Session Management**: Next.js session handling for user authentication state
+- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations (ready for production)
+- **Data Storage**: In-memory storage for development (MemStorage class in app/lib/storage.ts)
+- **Session Management**: Ready for Next.js session handling implementation
+- **API Structure**: RESTful endpoints following Next.js App Router conventions
 
 ## Database Design
 The schema includes three main entities:

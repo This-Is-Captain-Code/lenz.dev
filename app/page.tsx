@@ -5,8 +5,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { User, Lens } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import SnapCameraView from '../components/snap-ui/SnapCameraView';
-import { SnapSidebar } from '../components/snap-ui/SnapSidebar';
+import SnapCameraView from '@/components/snap-ui/SnapCameraView';
+import { SnapSidebar } from '@/components/snap-ui/SnapSidebar';
 
 export default function HomePage() {
   const { toast } = useToast();
