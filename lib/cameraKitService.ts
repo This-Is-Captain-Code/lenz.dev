@@ -142,7 +142,7 @@ export const applyLensToCanvas = async (
 /**
  * Capture a photo from the canvas
  */
-export const captureCanvas = async (canvas: HTMLCanvasElement): Promise<string> => {
+export const captureCanvas = async (canvas: HTMLCanvasElement, facingMode: 'user' | 'environment' = 'user'): Promise<string> => {
   try {
     console.log('Capturing photo from canvas...');
     
@@ -179,12 +179,24 @@ export const captureCanvas = async (canvas: HTMLCanvasElement): Promise<string> 
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, targetWidth, targetHeight);
     
+    // Apply horizontal flip for front camera (user mode)
+    if (facingMode === 'user') {
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.translate(-targetWidth, 0);
+    }
+    
     // Draw the canvas content, cropped and scaled to 9:16
     ctx.drawImage(
       canvas,
       sourceX, sourceY, scaledSourceWidth, scaledSourceHeight,
       0, 0, targetWidth, targetHeight
     );
+    
+    // Restore transformation
+    if (facingMode === 'user') {
+      ctx.restore();
+    }
     
     // Convert to data URL
     const dataUrl = captureCanvas.toDataURL('image/png', 1.0);

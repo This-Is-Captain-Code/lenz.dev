@@ -154,7 +154,7 @@ export default function SnapCameraView({
     if (!canvasRef.current) return;
     
     try {
-      const dataUrl = await captureCanvas(canvasRef.current);
+      const dataUrl = await captureCanvas(canvasRef.current, facingMode);
       setCapturedPhoto(dataUrl);
     } catch (error) {
       console.error('Failed to capture photo:', error);
@@ -328,7 +328,6 @@ export default function SnapCameraView({
                 src={capturedPhoto} 
                 alt="Captured photo" 
                 className="w-full h-full object-cover"
-                style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)' }}
               />
               
               {/* Lens name overlay - top left */}
@@ -450,7 +449,6 @@ export default function SnapCameraView({
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)' }}
       />
       
       {/* Loading Overlay */}
