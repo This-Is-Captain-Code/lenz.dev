@@ -289,25 +289,53 @@ export function SnapCameraView({
     }
   };
 
+  // Function to copy image to clipboard
+  const copyImageToClipboard = async (dataUrl: string) => {
+    try {
+      // Convert data URL to blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      
+      // Copy to clipboard
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob
+        })
+      ]);
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to copy image to clipboard:', error);
+      return false;
+    }
+  };
+
   // Function to share to Twitter/X
-  const shareToTwitter = () => {
+  const shareToTwitter = async () => {
     if (capturedPhoto) {
       // Create a text for the tweet
       const tweetText = "Captured using @lenzdotdev";
       
-      // Since we can't directly upload images to Twitter via URL params,
-      // we'll download the image and open Twitter with just the text
-      // Users can then manually attach the downloaded image
-      downloadPhoto();
+      // Try to copy image to clipboard first
+      const copied = await copyImageToClipboard(capturedPhoto);
       
       // Open Twitter with the text
       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
       window.open(twitterUrl, '_blank');
       
-      toast({
-        title: "Ready to Tweet!",
-        description: "Photo downloaded. Please attach it to your tweet.",
-      });
+      if (copied) {
+        toast({
+          title: "Image Copied!",
+          description: "Photo copied to clipboard. Paste it into your tweet with Ctrl+V (Cmd+V on Mac).",
+        });
+      } else {
+        // Fallback to download
+        downloadPhoto();
+        toast({
+          title: "Ready to Tweet!",
+          description: "Photo downloaded. Please attach it to your tweet.",
+        });
+      }
     }
   };
   
