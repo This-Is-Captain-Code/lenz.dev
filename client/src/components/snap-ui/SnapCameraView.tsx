@@ -518,9 +518,9 @@ export function SnapCameraView({
         </div>
 
         {/* Main content area with photo */}
-        <div className="flex-1 flex flex-col items-center justify-start p-3 pt-16 pb-32">
+        <div className="flex-1 flex flex-col items-center justify-center p-4 pt-20 pb-28">
           {/* Photo frame with borders and overlay text */}
-          <div className="relative w-full max-w-md max-h-[60vh]">
+          <div className="relative w-full max-w-xs">
             <div className="bg-white rounded-3xl p-2 shadow-2xl">
               <div className="relative rounded-2xl overflow-hidden bg-black">
                 <img 
@@ -563,10 +563,6 @@ export function SnapCameraView({
           <div className="flex justify-center px-4">
             {/* Share to section */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 border border-white/20 max-w-sm w-full mx-4">
-              <div className="text-white/70 text-sm font-medium mb-3 uppercase tracking-wider text-center">
-                SHARE TO
-              </div>
-              
               <div className="flex justify-between items-center">
                 <Button
                   size="icon"
