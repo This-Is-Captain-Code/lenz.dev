@@ -48,7 +48,7 @@ export class MemStorage implements IStorage {
         description: "Add futuristic neon vibes to your photos with electric blue and magenta overlays.",
         creator: "@techartist",
         downloads: 8200,
-        snapLensId: "cyberpunk-lens-id",
+        snapLensId: "22d39571-e721-4687-aae1-67dc235c479b",
         snapGroupId: "b5551368-7881-4a23-a034-a0e757ec85a7",
         category: "creative",
         isActive: true,
