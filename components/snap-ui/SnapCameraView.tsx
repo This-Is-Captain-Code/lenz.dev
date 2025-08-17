@@ -490,46 +490,44 @@ export default function SnapCameraView({
         />
       </div>
       
-      {/* Bottom Section - Lens Carousel */}
-      <div className="p-4 z-20 bg-transparent">
-        <div className="flex items-center justify-center space-x-4">
-          {lenses.map((lens, index) => {
-            const isActive = currentLens?.id === lens.id;
-            const isCenter = index === Math.floor(lenses.length / 2);
-            
-            return (
-              <motion.button
-                key={lens.id}
-                className={`
-                  relative rounded-full transition-all duration-300
-                  ${isActive && isCenter 
-                    ? 'w-20 h-20 bg-white border-4 border-white' 
-                    : 'w-12 h-12 bg-white/20 border-2 border-white/40'
-                  }
-                  ${!isActive ? 'hover:bg-white/30' : ''}
-                `}
-                onClick={() => {
-                  if (isActive && isCenter) {
-                    handleCapture();
-                  } else {
-                    const lensIndex = lenses.findIndex(l => l.id === lens.id);
-                    setCurrentLensIndex(lensIndex);
-                  }
+      {/* Bottom Controls - Lens Selector */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center gap-4">
+            {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
+              <motion.div
+                key={uniqueKey}
+                className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
+                animate={{
+                  scale: offset === 0 ? 1.2 : 0.8,
+                  opacity: Math.abs(offset) <= 1 ? 1 : 0.5,
+                  y: swipeDirection && Math.abs(offset) <= 1 ? swipeProgress * (swipeDirection === 'up' ? -20 : 20) : 0
                 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
-                {isActive && isCenter && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Camera className="h-8 w-8 text-black" />
-                  </div>
-                )}
-                {(!isActive || !isCenter) && (
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 opacity-60" />
-                )}
-              </motion.button>
-            );
-          })}
+                <Button
+                  variant={offset === 0 ? "default" : "secondary"}
+                  size="lg"
+                  className={`w-16 h-16 rounded-full p-0 border-2 ${
+                    offset === 0 
+                      ? 'border-white bg-white text-black hover:bg-gray-100' 
+                      : 'border-gray-400 bg-gray-800 text-white hover:bg-gray-700'
+                  }`}
+                  onClick={offset === 0 ? handleCapture : () => setCurrentLensIndex(index)}
+                >
+                  {offset === 0 ? (
+                    <Camera className="h-6 w-6" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                      <span className="text-xs font-bold text-white">
+                        {lens?.name?.charAt(0) || '?'}
+                      </span>
+                    </div>
+                  )}
+                </Button>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
