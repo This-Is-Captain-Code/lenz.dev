@@ -17,6 +17,20 @@ export default function DashboardPage() {
   const { wallet, isLoading } = useLenzWallet();
   const { isFrameReady } = useMiniKit();
   const [activeTab, setActiveTab] = useState<'tokens' | 'lenses'>('tokens');
+  const [copied, setCopied] = useState(false);
+  
+  // Copy wallet address to clipboard
+  const copyWalletAddress = async () => {
+    if (wallet?.address) {
+      try {
+        await navigator.clipboard.writeText(wallet.address);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      } catch (error) {
+        console.error('Failed to copy wallet address:', error);
+      }
+    }
+  };
 
   // Mock token data - in production, fetch from wallet APIs
   const tokens = [
@@ -207,10 +221,15 @@ export default function DashboardPage() {
       <div className="grid grid-cols-4 gap-4 px-6 mb-8">
         <Button
           variant="outline"
-          className="flex flex-col items-center gap-2 h-20 bg-white/10 border-white/20 hover:bg-white/20"
+          className={`flex flex-col items-center gap-2 h-20 border-white/20 hover:bg-white/20 transition-all duration-200 ${
+            copied ? 'bg-green-500/20 border-green-400/50' : 'bg-white/10'
+          }`}
+          onClick={copyWalletAddress}
         >
-          <Wallet size={24} />
-          <span className="text-xs">Receive</span>
+          <Wallet size={24} className={copied ? 'text-green-400' : ''} />
+          <span className={`text-xs ${copied ? 'text-green-400' : ''}`}>
+            {copied ? 'Copied!' : 'Receive'}
+          </span>
         </Button>
         
         <Button
