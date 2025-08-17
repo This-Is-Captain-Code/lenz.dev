@@ -639,27 +639,17 @@ export default function SnapCameraView({
           </div>
         )}
         
-        {/* Right Side - Wallet and Help */}
-        <div className="flex items-center gap-2">
-          {/* LenZ Wallet Button */}
-          <LenzWalletButton 
-            variant="ghost" 
-            size="sm"
-            className="text-white hover:bg-white/20 text-xs border border-white/20 bg-black/30 backdrop-blur-sm"
-          />
-          
-          {/* Help Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/20"
-            onClick={() => setShowLensInfo(!showLensInfo)}
-          >
-            <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
-              <span className="text-white text-sm font-bold">?</span>
-            </div>
-          </Button>
-        </div>
+        {/* Help Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/20"
+          onClick={() => setShowLensInfo(!showLensInfo)}
+        >
+          <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
+            <span className="text-white text-sm font-bold">?</span>
+          </div>
+        </Button>
       </div>
       
       {/* Bottom Controls - Lens Selector */}

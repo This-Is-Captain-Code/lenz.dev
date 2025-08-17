@@ -8,12 +8,13 @@ import { Badge } from '../../components/ui/badge';
 import { ArrowLeft, Wallet, PaperPlaneTilt, ArrowsClockwise, CurrencyDollar, User, Coins } from '@phosphor-icons/react';
 import { useLenzWallet } from '../../providers/LenzWalletProvider';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
+import { LenzWalletModal } from '../../components/lenz-wallet/LenzWalletModal';
 import { Lens } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { wallet } = useLenzWallet();
+  const { wallet, isLoading } = useLenzWallet();
   const { isFrameReady } = useMiniKit();
   const [activeTab, setActiveTab] = useState<'tokens' | 'lenses'>('tokens');
 
@@ -84,13 +85,86 @@ export default function DashboardPage() {
     }
   });
 
-  const totalBalance = tokens.reduce((sum, token) => {
-    const value = parseFloat(token.value.replace('$', ''));
-    return sum + value;
-  }, 0);
+  // Show wallet creation screen if no wallet exists
+  if (!wallet) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#990022] to-[#220099] text-white flex flex-col items-center justify-center p-6">
+        {/* Header */}
+        <div className="absolute top-6 left-6">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-white border-white/30 hover:bg-white/10"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Back
+          </Button>
+        </div>
 
-  const dailyChange = -10.00; // Mock daily change
-  const dailyChangePercent = -0.01; // Mock percentage
+        {/* Wallet Creation Content */}
+        <div className="text-center space-y-8 max-w-md">
+          <div className="space-y-4">
+            <div className="w-24 h-24 mx-auto rounded-full bg-white/10 flex items-center justify-center">
+              <Wallet size={48} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-bold">Create LenZ Wallet</h1>
+            <p className="text-white/70 text-lg">
+              Create your LenZ chainlet wallet to access your dashboard and manage your LENZ tokens.
+            </p>
+          </div>
+
+          <div className="bg-white/10 rounded-2xl p-6 space-y-4 border border-white/20">
+            <h3 className="font-semibold text-lg">LenZ Chainlet Features</h3>
+            <ul className="text-white/80 space-y-2 text-left">
+              <li className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                Native LENZ token support
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                Optimized for AR photo NFTs
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                Low gas fees on Saga blockchain
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                Dedicated LenZ ecosystem
+              </li>
+            </ul>
+          </div>
+
+          <LenzWalletModal>
+            <Button 
+              size="lg"
+              className="w-full bg-white text-black hover:bg-gray-100 font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                  Creating Wallet...
+                </div>
+              ) : (
+                <>
+                  <Wallet size={20} className="mr-2" />
+                  Create LenZ Wallet
+                </>
+              )}
+            </Button>
+          </LenzWalletModal>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate LENZ token balance in USD (mock rate: 1 LENZ = $12.50)
+  const lenzBalance = parseFloat(wallet.balance);
+  const lenzValueUSD = lenzBalance * 12.50;
+  const dailyChange = lenzValueUSD * -0.05; // Mock 5% daily change
+  const dailyChangePercent = -5.00; // Mock percentage
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#990022] to-[#220099] text-white">
@@ -116,9 +190,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Balance Section */}
+      {/* Balance Section - LENZ Token Balance */}
       <div className="text-center px-6 mb-8">
-        <h2 className="text-4xl font-bold mb-2">${totalBalance.toFixed(2)}</h2>
+        <div className="mb-2">
+          <div className="text-sm text-white/70 mb-1">LENZ Balance</div>
+          <div className="text-2xl font-medium text-white/90">{lenzBalance.toFixed(5)} LENZ</div>
+        </div>
+        <h2 className="text-4xl font-bold mb-2">${lenzValueUSD.toFixed(2)}</h2>
         <div className="flex items-center justify-center gap-4 text-sm">
           <span className="text-red-400">-${Math.abs(dailyChange).toFixed(2)}</span>
           <span className="text-red-400">{dailyChangePercent.toFixed(2)}%</span>

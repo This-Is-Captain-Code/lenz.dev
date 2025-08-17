@@ -30,6 +30,10 @@ This is a full-stack web application that integrates Snapchat's Camera Kit to cr
   - Created dual-tab layout for Tokens and My Lenses management
   - Integrated with LenZ wallet balance display and transaction functionality
   - Connected profile button navigation from camera to dashboard page
+  - **WALLET-GATED DASHBOARD**: Moved LenZ wallet creation to dashboard entry point
+  - Users must create LenZ wallet before accessing dashboard features
+  - Dashboard displays actual LENZ token balance from user's chainlet wallet
+  - Removed wallet button from camera interface to centralize wallet management
 - **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
   - Removed all Express server dependencies and files (server/ directory)
   - Migrated all Express API routes to Next.js API routes (app/api/)
