@@ -2,6 +2,14 @@ import { Squid } from '@0xsquid/sdk';
 import { ethers } from 'ethers';
 import axios from 'axios';
 
+// Define proper wallet interface for SquidRouter
+interface SquidWallet {
+  signMessage?(message: string): Promise<string>;
+  signTransaction?(transaction: any): Promise<string>;
+  getAddress(): Promise<string>;
+  provider?: ethers.Provider;
+}
+
 // SquidRouter Bridge Service for LenZ to Base bridging
 export class SquidBridgeService {
   private squid: Squid | null = null;
@@ -50,9 +58,9 @@ export class SquidBridgeService {
       return {
         route,
         estimatedTime: route.estimate.estimatedRouteDuration || 180, // Default 3 minutes
-        gasCost: route.estimate.gasCosts,
-        exchangeRate: route.estimate.exchangeRate,
-        slippage: route.estimate.slippage
+        gasCost: route.estimate.gasCosts || [],
+        exchangeRate: route.estimate.exchangeRate || '1',
+        slippage: (route.estimate as any)?.slippagePercent || (route.estimate as any)?.slippage || 1
       };
     } catch (error) {
       console.error('Failed to get bridge route:', error);
@@ -63,24 +71,43 @@ export class SquidBridgeService {
   // Execute bridge transaction
   async executeBridge(
     route: any,
-    signerOrProvider: ethers.Signer | ethers.Provider
+    signer: ethers.Signer
   ): Promise<BridgeTransactionResult> {
     await this.initialize();
 
+    // Ensure we have a proper signer
+    if (!signer || typeof signer.signTransaction !== 'function') {
+      throw new Error('Valid signer required for bridge transaction');
+    }
+
     try {
+      // Create a wallet adapter for SquidRouter
+      const walletAdapter = {
+        signMessage: async (message: string) => {
+          return await signer.signMessage(message);
+        },
+        signTransaction: async (transaction: any) => {
+          return await signer.signTransaction(transaction);
+        },
+        getAddress: async () => {
+          return await signer.getAddress();
+        },
+        provider: signer.provider
+      };
+
       const result = await this.squid!.executeRoute({
         route,
-        signer: signerOrProvider as ethers.Signer
+        signer: walletAdapter as any // Use type assertion as fallback
       });
 
       return {
-        transactionHash: result.transactionRequest.hash,
-        routeRequestId: route.routeRequestId,
+        transactionHash: (result as any)?.transactionId || (result as any)?.txHash || (result as any)?.hash || 'pending',
+        routeRequestId: route.routeRequestId || route.id || 'pending',
         status: 'pending',
         fromChain: SAGA_CHAINLET_ID,
         toChain: BASE_CHAIN_ID,
-        amount: route.params.fromAmount,
-        estimatedTime: route.estimate.estimatedRouteDuration || 180
+        amount: route.params?.fromAmount || route.fromAmount || '0',
+        estimatedTime: route.estimate?.estimatedRouteDuration || 180
       };
     } catch (error) {
       console.error('Bridge execution failed:', error);
@@ -89,23 +116,24 @@ export class SquidBridgeService {
   }
 
   // Track bridge transaction status
-  async getTransactionStatus(routeRequestId: string): Promise<BridgeTransactionStatus> {
+  async getTransactionStatus(routeRequestId: string, quoteId?: string): Promise<BridgeTransactionStatus> {
     await this.initialize();
 
     try {
       const status = await this.squid!.getStatus({
-        transactionId: routeRequestId
+        transactionId: routeRequestId,
+        quoteId: quoteId || routeRequestId // Use routeRequestId as fallback
       });
 
       return {
-        status: status.squidTransactionStatus,
+        status: status.squidTransactionStatus || 'unknown',
         fromChain: {
           transactionHash: status.fromChain?.transactionId,
-          status: status.fromChain?.chainStatus
+          status: (status.fromChain as any)?.transactionStatus || (status.fromChain as any)?.status || 'pending'
         },
         toChain: {
           transactionHash: status.toChain?.transactionId,
-          status: status.toChain?.chainStatus
+          status: (status.toChain as any)?.transactionStatus || (status.toChain as any)?.status || 'pending'
         },
         error: status.error
       };
