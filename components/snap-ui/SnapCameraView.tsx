@@ -6,7 +6,7 @@ import { Lens, User } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { applyLensToCanvas, captureCanvas, initializeCamera } from '@/lib/cameraKitService';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Repeat, Sparkles, Download, Info, X, ChevronUp } from 'lucide-react';
+import { Camera, Repeat, Download, Info, X, ChevronUp, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -50,7 +50,6 @@ export default function SnapCameraView({
     queryFn: async () => {
       try {
         const result = await apiRequest('/api/my-lenses');
-        // Extract lenses from user lenses response
         return result.map((ul: any) => ul.lens);
       } catch (error) {
         return [];
@@ -134,7 +133,7 @@ export default function SnapCameraView({
   const switchCamera = () => {
     const newFacingMode = facingMode === 'user' ? 'environment' : 'user';
     setFacingMode(newFacingMode);
-    setIsCameraReady(false); // Reset camera state to reinitialize
+    setIsCameraReady(false);
   };
   
   // Change lens
@@ -171,7 +170,7 @@ export default function SnapCameraView({
       });
     }
   };
-  
+
   // Handle touch events for lens switching
   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -180,7 +179,7 @@ export default function SnapCameraView({
     const handleTouchMove = (moveEvent: TouchEvent) => {
       const currentTouch = moveEvent.touches[0];
       const deltaY = currentTouch.clientY - startY;
-      const progress = Math.abs(deltaY) / 100; // Normalize to 0-1
+      const progress = Math.abs(deltaY) / 100;
       
       if (Math.abs(deltaY) > 10) {
         setSwipeDirection(deltaY > 0 ? 'down' : 'up');
@@ -197,7 +196,6 @@ export default function SnapCameraView({
         }
       }
       
-      // Reset swipe state
       setSwipeDirection(null);
       setSwipeProgress(0);
       
@@ -208,7 +206,7 @@ export default function SnapCameraView({
     document.addEventListener('touchmove', handleTouchMove);
     document.addEventListener('touchend', handleTouchEnd);
   };
-  
+
   // Auto-hide controls after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -217,122 +215,119 @@ export default function SnapCameraView({
     
     return () => clearTimeout(timer);
   }, [showControls]);
-  
+
   // Show controls when user interacts
   const showControlsTemporary = () => {
     setShowControls(true);
   };
-  
+
   // Download photo function
   const downloadPhoto = () => {
     if (capturedPhoto) {
       const a = document.createElement('a');
       a.href = capturedPhoto;
-      a.download = `lenz-photo-${Date.now()}.png`;
+      a.download = `lens-photo-${Date.now()}.png`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      
+      toast({
+        title: "Photo Downloaded",
+        description: "Your photo has been saved to your device.",
+      });
     }
   };
 
-  // Function to copy image to clipboard
-  const copyImageToClipboard = async (dataUrl: string) => {
-    try {
-      // Convert data URL to blob
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      
-      // Copy to clipboard
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob
-        })
-      ]);
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to copy image to clipboard:', error);
-      return false;
-    }
-  };
-
-  // Function to share to Twitter/X
-  const shareToTwitter = async () => {
+  // Share to Twitter function
+  const shareToTwitter = () => {
     if (capturedPhoto) {
-      // Create a text for the tweet
-      const tweetText = "Captured using lenzdotdev";
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
       
-      // Try to copy image to clipboard first
-      const copied = await copyImageToClipboard(capturedPhoto);
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx?.drawImage(img, 0, 0);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], 'lens-photo.png', { type: 'image/png' });
+            
+            if (navigator.share && navigator.canShare?.({ files: [file] })) {
+              navigator.share({
+                text: 'Captured using @lenzdotdev',
+                files: [file]
+              }).catch(console.error);
+            } else {
+              const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent('Captured using @lenzdotdev')}`;
+              window.open(twitterUrl, '_blank');
+            }
+          }
+        }, 'image/png');
+      };
       
-      // Open Twitter with the text
-      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-      window.open(twitterUrl, '_blank');
-      
-      if (copied) {
-        toast({
-          title: "Image Copied!",
-          description: "Photo copied to clipboard. Paste it into your tweet with Ctrl+V (Cmd+V on Mac).",
-        });
-      } else {
-        // Fallback to download
-        downloadPhoto();
-        toast({
-          title: "Ready to Tweet!",
-          description: "Photo downloaded. Please attach it to your tweet.",
-        });
-      }
+      img.src = capturedPhoto;
     }
   };
-  
-  // Handle back to camera view
+
+  // Back to camera function
   const backToCamera = () => {
     setCapturedPhoto(null);
   };
-  
-  // Get visible lenses for the selector (4 at a time)
+
+  // Get visible lenses for carousel
   const getVisibleLenses = () => {
-    if (lenses.length === 0) return [];
+    const visibleCount = 5;
+    const result = [];
     
-    const visible = [];
     for (let i = -2; i <= 2; i++) {
-      const index = (currentLensIndex + i + lenses.length) % lenses.length;
-      visible.push({
+      let index = currentLensIndex + i;
+      if (index < 0) index = lenses.length + index;
+      if (index >= lenses.length) index = index - lenses.length;
+      
+      result.push({
         lens: lenses[index],
         offset: i,
-        index
+        index: index
       });
     }
-    return visible;
+    
+    return result;
   };
 
+  // Captured photo view
   if (capturedPhoto) {
     return (
-      <div className="relative w-full h-screen bg-black overflow-hidden">
-        {/* Captured Photo Display */}
-        <div className="relative w-full h-full flex items-center justify-center">
-          <img 
-            src={capturedPhoto} 
-            alt="Captured photo" 
-            className="max-w-full max-h-full object-contain"
-          />
-          
-          {/* Back Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-4 left-4 text-white hover:bg-white/20"
-            onClick={backToCamera}
-          >
-            <X className="h-6 w-6" />
-          </Button>
-          
-          {/* Share Controls */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
+      <div className="relative w-full h-screen bg-black flex flex-col">
+        {/* Photo Display with Frame */}
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="relative max-w-sm w-full">
+            {/* Polaroid-style frame */}
+            <div className="bg-white p-4 pb-16 rounded-lg shadow-2xl transform rotate-1">
+              <img 
+                src={capturedPhoto} 
+                alt="Captured photo" 
+                className="w-full aspect-[9/16] object-cover rounded"
+              />
+              <div className="mt-4 text-center">
+                <p className="text-gray-600 text-sm font-medium">
+                  Captured with {currentLens?.name || 'Lens'}
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  lenz.dev
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="p-6 flex flex-col gap-4">
+          <div className="flex gap-3">
             <Button
-              variant="secondary"
               onClick={downloadPhoto}
-              className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+              className="flex-1 bg-gray-800 text-white hover:bg-gray-700"
             >
               <Download className="h-4 w-4 mr-2" />
               Download
@@ -340,7 +335,7 @@ export default function SnapCameraView({
             
             <Button
               onClick={shareToTwitter}
-              className="bg-blue-500 text-white hover:bg-blue-600"
+              className="flex-1 bg-blue-500 text-white hover:bg-blue-600"
             >
               <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -348,6 +343,15 @@ export default function SnapCameraView({
               Share on X
             </Button>
           </div>
+          
+          <Button
+            onClick={backToCamera}
+            variant="outline"
+            className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Back to Camera
+          </Button>
         </div>
       </div>
     );
@@ -394,7 +398,9 @@ export default function SnapCameraView({
                 className="text-white hover:bg-white/20"
                 onClick={onOpenSidebar}
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400"></div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                  <UserIcon className="h-4 w-4 text-white" />
+                </div>
               </Button>
               
               {/* Lens Name */}
@@ -452,15 +458,6 @@ export default function SnapCameraView({
             >
               <Repeat className="h-5 w-5" />
             </Button>
-            
-            {/* Lens Effects */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20 backdrop-blur-sm"
-            >
-              <Sparkles className="h-5 w-5" />
-            </Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -471,7 +468,7 @@ export default function SnapCameraView({
           <div className="flex items-center gap-4">
             {getVisibleLenses().map(({ lens, offset, index }) => (
               <motion.div
-                key={lens.id}
+                key={lens?.id || index}
                 className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
                 animate={{
                   scale: offset === 0 ? 1.2 : 0.8,
@@ -495,14 +492,14 @@ export default function SnapCameraView({
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
                       <span className="text-xs font-bold text-white">
-                        {lens.name.charAt(0)}
+                        {lens?.name?.charAt(0) || '?'}
                       </span>
                     </div>
                   )}
                 </Button>
                 
                 {/* Lens Name Label */}
-                {Math.abs(offset) <= 1 && (
+                {Math.abs(offset) <= 1 && lens && (
                   <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
                     <span className="text-white text-xs text-center block whitespace-nowrap">
                       {lens.name}

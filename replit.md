@@ -1,6 +1,16 @@
 # Overview
 
-This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with a React frontend and Express backend, featuring a mobile-first design similar to popular social media camera interfaces.
+This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
+
+## Recent Changes (January 17, 2025)
+- Successfully migrated from Express+Vite to Next.js App Router while maintaining full camera functionality
+- Fixed lens application issues by using correct Camera Kit API (`loadLens` instead of `getLens`)
+- Restored original Snapchat-like UI design with:
+  - Profile icon (top left), lens name (top center), help icon (top right)
+  - Swipeable lens carousel at bottom with center lens as capture button
+  - Post-capture polaroid-style photo frame with social sharing
+  - Twitter sharing with "Captured using @lenzdotdev" text
+  - Download functionality with proper 9:16 aspect ratio
 
 # User Preferences
 
