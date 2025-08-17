@@ -324,7 +324,7 @@ export default function SnapCameraView({
         </div>
         
         {/* Main Photo Container - Centered between top and share sections */}
-        <div className="flex-1 p-4 pt-20 pb-28 flex items-center justify-center">
+        <div className="flex-1 p-4 pt-20 pb-32 flex items-center justify-center">
           <div className="relative w-full max-w-sm mx-auto">
             {/* Photo with exact 9:16 aspect ratio */}
             <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
@@ -355,8 +355,8 @@ export default function SnapCameraView({
           </div>
         </div>
         
-        {/* Share Section - Positioned same height as lens carousel */}
-        <div className="absolute bottom-6 left-0 right-0 px-4">
+        {/* Share Section - Same position as lens carousel (bottom-0 p-6) */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
           <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto">
             <div className="flex justify-center gap-6">
               {/* X/Twitter */}
