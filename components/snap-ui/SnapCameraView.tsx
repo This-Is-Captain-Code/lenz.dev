@@ -446,10 +446,16 @@ export default function SnapCameraView({
       onClick={showControlsTemporary}
     >
       {/* Camera Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full max-w-full max-h-full"
+          style={{ 
+            aspectRatio: '9/16',
+            objectFit: 'contain'
+          }}
+        />
+      </div>
       
       {/* Loading Overlay */}
       {!isCameraReady && (
