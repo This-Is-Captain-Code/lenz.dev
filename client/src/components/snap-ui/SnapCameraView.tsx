@@ -136,6 +136,10 @@ export function SnapCameraView({
     let startTime = 0;
     
     const handleTouchStart = (e: TouchEvent) => {
+      // Don't interfere with button touches
+      const target = e.target as HTMLElement;
+      if (target.closest('button')) return;
+      
       // Only handle touches in the bottom area (carousel area)
       const touch = e.touches[0];
       const rect = carousel.getBoundingClientRect();
@@ -205,16 +209,58 @@ export function SnapCameraView({
     setShowHelp(prev => !prev);
   };
   
-  // Capture photo
+  // Capture photo with enhanced mobile support
   const capturePhoto = () => {
-    if (canvasRef.current) {
+    console.log('Capture photo triggered');
+    
+    if (!canvasRef.current) {
+      console.error('Canvas ref is null');
+      toast({
+        title: "Capture Error",
+        description: "Camera not ready. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!isCameraReady) {
+      console.error('Camera not ready');
+      toast({
+        title: "Camera Not Ready",
+        description: "Please wait for camera to initialize.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      console.log('Attempting to capture canvas...');
       const dataUrl = captureCanvas(canvasRef.current);
+      
+      if (!dataUrl || dataUrl.length < 100) {
+        throw new Error('Invalid capture data');
+      }
+      
+      console.log('Photo captured successfully, setting state...');
       setCapturedPhoto(dataUrl);
       
-      // For now, just show a toast
+      // Show success feedback
       toast({
-        title: "Photo Captured",
+        title: "Photo Captured!",
         description: "Your photo has been captured with the lens applied.",
+      });
+      
+      // Add haptic feedback on mobile if available
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+      
+    } catch (error) {
+      console.error('Capture failed:', error);
+      toast({
+        title: "Capture Failed",
+        description: "Failed to capture photo. Please try again.",
+        variant: "destructive"
       });
     }
   };
@@ -358,10 +404,27 @@ export function SnapCameraView({
                         ? 'bg-white text-black border-4 border-white shadow-2xl scale-110'
                         : 'bg-white/90 text-black border-2 border-white/80 hover:bg-white hover:scale-105'
                     }`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      
                       if (isCapture) {
+                        console.log('Capture button clicked');
                         capturePhoto();
                       } else {
+                        console.log('Lens button clicked:', actualIndex);
+                        setCurrentLensIndex(actualIndex);
+                      }
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      
+                      if (isCapture) {
+                        console.log('Capture button touched');
+                        capturePhoto();
+                      } else {
+                        console.log('Lens button touched:', actualIndex);
                         setCurrentLensIndex(actualIndex);
                       }
                     }}
