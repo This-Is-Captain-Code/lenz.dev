@@ -295,7 +295,7 @@ export default function SnapCameraView({
   // Captured photo view
   if (capturedPhoto) {
     return (
-      <div className="absolute inset-0 bg-black flex flex-col overflow-hidden">
+      <div className="relative w-full h-full bg-black flex flex-col overflow-hidden">
         {/* Top Bar - Matching Home Screen */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 pt-safe z-20">
           {/* Profile Icon */}
@@ -481,7 +481,7 @@ export default function SnapCameraView({
   return (
     <div 
       ref={containerRef}
-      className="absolute inset-0 bg-black overflow-hidden"
+      className="relative w-full h-full bg-black overflow-hidden"
       onTouchStart={handleTouchStart}
       onClick={showControlsTemporary}
     >
