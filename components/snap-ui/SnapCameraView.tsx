@@ -323,11 +323,11 @@ export default function SnapCameraView({
           </Button>
         </div>
         
-        {/* Main Photo Container - Optimized spacing */}
-        <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-24">
-          <div className="relative w-full max-w-sm mx-auto">
-            {/* Photo with exact 9:16 aspect ratio */}
-            <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
+        {/* Main Photo Container - Fits between top (80px) and share section (120px) */}
+        <div className="absolute top-20 bottom-32 left-0 right-0 flex items-center justify-center px-4">
+          <div className="relative w-full h-full max-w-sm mx-auto flex items-center justify-center">
+            {/* Photo with constrained size to fit available space while maintaining 9:16 ratio */}
+            <div className="relative w-full max-h-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
               <img 
                 src={capturedPhoto} 
                 alt="Captured photo" 
