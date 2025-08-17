@@ -323,35 +323,32 @@ export default function SnapCameraView({
           </Button>
         </div>
         
-        {/* Main Photo Container - Responsive positioning for mobile and desktop */}
-        <div className="flex-1 flex items-center justify-center px-4 py-4 md:py-8">
-          {/* Container with proper spacing for top bar and share section */}
-          <div className="w-full h-full flex items-center justify-center" style={{ paddingTop: '80px', paddingBottom: '120px' }}>
-            <div className="relative w-full max-w-sm mx-auto">
-              {/* Photo with exact 9:16 aspect ratio */}
-              <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
-                <img 
-                  src={capturedPhoto} 
-                  alt="Captured photo" 
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Lens name overlay - top left */}
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2">
-                  <span className="text-white text-sm font-medium">
-                    {currentLens?.name || 'Lens'}
-                  </span>
+        {/* Main Photo Container - Optimized spacing */}
+        <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-24">
+          <div className="relative w-full max-w-sm mx-auto">
+            {/* Photo with exact 9:16 aspect ratio */}
+            <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden border-2 border-white">
+              <img 
+                src={capturedPhoto} 
+                alt="Captured photo" 
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Lens name overlay - top left */}
+              <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2">
+                <span className="text-white text-sm font-medium">
+                  {currentLens?.name || 'Lens'}
+                </span>
+              </div>
+              
+              {/* Attribution - bottom left */}
+              <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">W</span>
                 </div>
-                
-                {/* Attribution - bottom left */}
-                <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">W</span>
-                  </div>
-                  <div className="text-white text-sm">
-                    <span className="font-medium">@waszim</span>
-                    <div className="text-white/70 text-xs">1 min</div>
-                  </div>
+                <div className="text-white text-sm">
+                  <span className="font-medium">@waszim</span>
+                  <div className="text-white/70 text-xs">1 min</div>
                 </div>
               </div>
             </div>
