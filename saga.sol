@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @notice Minimal IERC20 interface
+/// @notice Minimal ERC-20 interface needed by this contract
 interface IERC20 {
     function transfer(address to, uint256 value) external returns (bool);
     function transferFrom(address from,address to,uint256 value) external returns (bool);
@@ -10,12 +10,18 @@ interface IERC20 {
     function allowance(address owner, address spender) external view returns (uint256);
 }
 
-/// @notice Minimal Ownable
+/// @notice Minimal Ownable implementation
 abstract contract Ownable {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     address public owner;
-    constructor() { owner = msg.sender; emit OwnershipTransferred(address(0), msg.sender); }
-    modifier onlyOwner() { require(msg.sender == owner, "NOT_OWNER"); _; }
+    constructor() {
+        owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
+    }
+    modifier onlyOwner() {
+        require(msg.sender == owner, "NOT_OWNER");
+        _;
+    }
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "ZERO_ADDR");
         emit OwnershipTransferred(owner, newOwner);
@@ -23,9 +29,10 @@ abstract contract Ownable {
     }
 }
 
-/// @notice Minimal ReentrancyGuard
+/// @notice Minimal Reentrancy guard
 abstract contract ReentrancyGuard {
-    uint256 private _entered = 1;
+    uint256 private _entered;
+    constructor() { _entered = 1; }
     modifier nonReentrant() {
         require(_entered == 1, "REENTRANT");
         _entered = 2;
@@ -36,12 +43,12 @@ abstract contract ReentrancyGuard {
 
 /**
  * @title LenzLikeAndGames
- * @notice Press-like tipping + simple staking game pools.
- * - If token == address(0): uses native chain coin (e.g., LENZ as gas coin).
- * - Else: uses ERC20 at `token`.
+ * @notice Like-to-tip + simple staking mini-games contract.
+ * - token == address(0) => native coin mode (e.g., LENZ as native)
+ * - token != address(0) => ERC20 token mode
  */
 contract LenzLikeAndGames is Ownable, ReentrancyGuard {
-    address public immutable token; // address(0) => native mode
+    address public immutable token; // zero for native
 
     // ===== Events =====
     event LikedNative(address indexed from, address indexed to, uint256 amount);
@@ -66,13 +73,14 @@ contract LenzLikeAndGames is Ownable, ReentrancyGuard {
     uint256 public nextGameId;
     mapping(uint256 => Game) private games;
 
-    constructor(address _token /* address(0) => native */) {
+    // ===== Constructor =====
+    constructor(address _token) Ownable() ReentrancyGuard() {
         token = _token;
     }
 
     // ===== Like-to-tip =====
 
-    /// @notice Tip with native coin. Only available if token == address(0).
+    /// @notice Tip with native coin. Only when token == address(0).
     function likeNative(address to) external payable nonReentrant {
         require(token == address(0), "NATIVE_ONLY");
         require(to != address(0), "BAD_TO");
@@ -82,7 +90,7 @@ contract LenzLikeAndGames is Ownable, ReentrancyGuard {
         emit LikedNative(msg.sender, to, msg.value);
     }
 
-    /// @notice Tip with ERC20. Only available if token != address(0).
+    /// @notice Tip with ERC20. Only when token != address(0).
     function likeERC20(address to, uint256 amount) external nonReentrant {
         require(token != address(0), "ERC20_ONLY");
         require(to != address(0), "BAD_TO");
