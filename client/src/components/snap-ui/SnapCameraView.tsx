@@ -288,6 +288,28 @@ export function SnapCameraView({
       document.body.removeChild(a);
     }
   };
+
+  // Function to share to Twitter/X
+  const shareToTwitter = () => {
+    if (capturedPhoto) {
+      // Create a text for the tweet
+      const tweetText = "Captured using @lenzdotdev";
+      
+      // Since we can't directly upload images to Twitter via URL params,
+      // we'll download the image and open Twitter with just the text
+      // Users can then manually attach the downloaded image
+      downloadPhoto();
+      
+      // Open Twitter with the text
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+      window.open(twitterUrl, '_blank');
+      
+      toast({
+        title: "Ready to Tweet!",
+        description: "Photo downloaded. Please attach it to your tweet.",
+      });
+    }
+  };
   
   // Handle back to camera view
   const backToCamera = () => {
@@ -567,7 +589,7 @@ export function SnapCameraView({
                 <Button
                   size="icon"
                   className="h-12 w-12 rounded-xl bg-white/10 text-white hover:bg-white/20 border-none"
-                  onClick={() => {/* Handle X share */}}
+                  onClick={shareToTwitter}
                   data-testid="button-share-x"
                 >
                   <XLogo className="h-6 w-6" />
