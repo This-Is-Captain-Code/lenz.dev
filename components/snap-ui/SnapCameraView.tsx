@@ -328,6 +328,7 @@ export default function SnapCameraView({
                 src={capturedPhoto} 
                 alt="Captured photo" 
                 className="w-full h-full object-cover"
+                style={{ transform: facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)' }}
               />
               
               {/* Lens name overlay - top left */}
