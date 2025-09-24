@@ -7,10 +7,25 @@ import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import SnapCameraView from '../components/snap-ui/SnapCameraView';
 import { SnapSidebar } from '../components/snap-ui/SnapSidebar';
+import { useWeb3 } from '../hooks/useWeb3';
+import { BalanceDisplay } from '../components/web3/BalanceDisplay';
 
 export default function HomePage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Web3 functionality
+  const {
+    account,
+    wsStatus,
+    isAuthenticated,
+    balances,
+    isLoadingBalances,
+    isTransferring,
+    connectWallet,
+    handleSupport,
+    formatAddress,
+  } = useWeb3();
   
   // State
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,6 +89,16 @@ export default function HomePage() {
         <SnapCameraView
           defaultLensId={selectedLens?.id}
           onOpenSidebar={toggleSidebar}
+          // Web3 props
+          account={account}
+          wsStatus={wsStatus}
+          isAuthenticated={isAuthenticated}
+          balances={balances}
+          isLoadingBalances={isLoadingBalances}
+          isTransferring={isTransferring}
+          connectWallet={connectWallet}
+          handleSupport={handleSupport}
+          formatAddress={formatAddress}
         />
       </div>
       

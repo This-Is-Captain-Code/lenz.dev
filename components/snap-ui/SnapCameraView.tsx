@@ -10,17 +10,41 @@ import { useToast } from '@/hooks/use-toast';
 import { Camera, Repeat, Download, Info, X, ChevronUp, User as UserIcon, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Address } from 'viem';
+import type { WsStatus } from '../../lib/websocket';
+import { BalanceDisplay } from '../web3/BalanceDisplay';
+import { users } from '../../lib/data/users';
 
 interface SnapCameraViewProps {
   defaultLensId?: string;
   userLensesOnly?: boolean;
   onOpenSidebar?: () => void;
+  // Web3 props
+  account?: Address | null;
+  wsStatus?: WsStatus;
+  isAuthenticated?: boolean;
+  balances?: Record<string, string> | null;
+  isLoadingBalances?: boolean;
+  isTransferring?: boolean;
+  connectWallet?: () => Promise<void>;
+  handleSupport?: (recipient: string, amount: string) => Promise<void>;
+  formatAddress?: (address: Address) => string;
 }
 
 export default function SnapCameraView({ 
   defaultLensId, 
   userLensesOnly = false,
-  onOpenSidebar
+  onOpenSidebar,
+  // Web3 props
+  account,
+  wsStatus,
+  isAuthenticated,
+  balances,
+  isLoadingBalances,
+  isTransferring,
+  connectWallet,
+  handleSupport,
+  formatAddress,
 }: SnapCameraViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -516,12 +540,62 @@ export default function SnapCameraView({
           </div>
         </Button>
         
-        {/* Lens Name */}
-        {currentLens && (
-          <div className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
-            <span className="text-white text-sm font-medium">{currentLens.name}</span>
-          </div>
-        )}
+        {/* Center Section - Lens Name and Web3 Controls */}
+        <div className="flex items-center gap-3">
+          {/* Lens Name */}
+          {currentLens && (
+            <div className="bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+              <span className="text-white text-sm font-medium">{currentLens.name}</span>
+            </div>
+          )}
+          
+          {/* Balance Display when authenticated */}
+          {isAuthenticated && (
+            <BalanceDisplay
+              balance={isLoadingBalances ? 'Loading...' : (balances?.['usdc'] ?? null)}
+              symbol="USDC"
+            />
+          )}
+          
+          {/* WebSocket status */}
+          {wsStatus && (
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
+              wsStatus === 'Connected' ? 'bg-green-500/20 text-green-400' :
+              wsStatus === 'Connecting' ? 'bg-yellow-500/20 text-yellow-400' :
+              'bg-red-500/20 text-red-400'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                wsStatus === 'Connected' ? 'bg-green-400' :
+                wsStatus === 'Connecting' ? 'bg-yellow-400' :
+                'bg-red-400'
+              }`}></span>
+              {wsStatus}
+            </div>
+          )}
+          
+          {/* Wallet Connection */}
+          {connectWallet && (
+            <div className="flex items-center">
+              {account ? (
+                <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-md">
+                  <span className="text-xs font-mono text-primary">
+                    {formatAddress && formatAddress(account)}
+                  </span>
+                  {isAuthenticated && (
+                    <span className="text-xs text-green-400 font-medium">✓</span>
+                  )}
+                </div>
+              ) : (
+                <Button
+                  onClick={connectWallet}
+                  className="px-3 py-1 text-xs bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/80 transition-colors"
+                >
+                  Connect Wallet
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
         
         {/* Help Button */}
         <Button
@@ -543,7 +617,7 @@ export default function SnapCameraView({
             {getVisibleLenses().map(({ lens, offset, index, uniqueKey }) => (
               <motion.div
                 key={uniqueKey}
-                className={`relative ${offset === 0 ? 'z-20' : 'z-10'}`}
+                className={`relative flex flex-col items-center gap-2 ${offset === 0 ? 'z-20' : 'z-10'}`}
                 animate={{
                   scale: offset === 0 ? 1.2 : 0.8,
                   opacity: Math.abs(offset) <= 1 ? 1 : 0.5,
@@ -560,6 +634,7 @@ export default function SnapCameraView({
                       : 'border-gray-400 bg-gray-800 text-white hover:bg-gray-700'
                   }`}
                   onClick={offset === 0 ? handleCapture : () => setCurrentLensIndex(index)}
+                  data-testid={offset === 0 ? 'button-capture' : `button-lens-${lens?.id || index}`}
                 >
                   {offset === 0 ? (
                     <Camera className="h-6 w-6" />
@@ -571,6 +646,34 @@ export default function SnapCameraView({
                     </div>
                   )}
                 </Button>
+                
+                {/* Support Button for non-center lenses */}
+                {offset !== 0 && lens && handleSupport && (
+                  <Button
+                    size="sm"
+                    className={`px-2 py-1 text-xs rounded-full transition-all duration-200 ${
+                      !account || !isAuthenticated
+                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600'
+                        : 'bg-green-600 hover:bg-green-500 text-white border border-green-500'
+                    }`}
+                    disabled={!account || !isAuthenticated || isTransferring}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (lens && handleSupport) {
+                        // Find the lens creator's wallet address
+                        const creator = users.find(user => user.name === lens.creator);
+                        if (creator && creator.walletAddress) {
+                          await handleSupport(creator.walletAddress, '0.01');
+                        } else {
+                          console.error('Creator wallet address not found for lens:', lens.name);
+                        }
+                      }
+                    }}
+                    data-testid={`button-support-${lens.id}`}
+                  >
+                    ⚡ {!account ? 'Connect' : !isAuthenticated ? 'Auth...' : isTransferring ? 'Sending...' : '0.01 USDC'}
+                  </Button>
+                )}
               </motion.div>
             ))}
           </div>
