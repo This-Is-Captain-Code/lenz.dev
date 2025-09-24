@@ -1,0 +1,93 @@
+import { type Post } from '../../shared/schema';
+
+interface PostListProps {
+  posts: Post[];
+}
+
+export function PostList({ posts }: PostListProps) {
+  const handleTip = (post: Post) => {
+    // --- WORKSHOP: INSTANT TIP LOGIC ---
+    // This is where we'll implement the instant tip functionality
+    // using the sessionSigner to send 1 USDC to the post author
+    console.log('Tipping post:', post.id, 'by', post.authorName);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) return 'yesterday';
+    if (diffDays <= 7) return `${diffDays} days ago`;
+    if (diffDays <= 14) return `${Math.ceil(diffDays / 7)} week ago`;
+    if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  return (
+    <section className="max-w-6xl mx-auto px-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+        {posts.map((post, index) => (
+          <article 
+            key={post.id} 
+            className="relative bg-background border-2 border-border rounded-xl overflow-hidden transition-all duration-200 hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+            data-testid={`card-post-${post.id}`}
+          >
+            <a 
+              href={`#post-${post.id}`} 
+              className="block text-inherit no-underline p-6 relative h-full"
+              data-testid={`link-post-${post.id}`}
+            >
+              <span className="absolute right-0 top-0 transform translate-x-1/4 -translate-y-1/4 rotate-12 text-6xl font-black text-primary font-mono pointer-events-none z-10 italic">
+                {index + 1}
+              </span>
+              <div className="relative z-20 h-full flex flex-col">
+                <p className="text-sm text-muted-foreground mb-4 font-semibold uppercase tracking-wide">
+                  <span data-testid={`text-type-${post.id}`}>{post.type}</span>{' '}
+                  <span className="opacity-50 mx-2">×</span>{' '}
+                  <time dateTime={post.createdAt?.toISOString()} data-testid={`text-date-${post.id}`}>
+                    {formatDate(post.createdAt?.toISOString() || new Date().toISOString())}
+                  </time>
+                </p>
+                <h4 className="text-2xl font-bold text-foreground mb-4 line-clamp-2 font-mono tracking-tight" data-testid={`text-title-${post.id}`}>
+                  {post.title}
+                </h4>
+                <p className="text-muted-foreground mb-auto line-clamp-3 leading-relaxed" data-testid={`text-content-${post.id}`}>
+                  {post.content}
+                </p>
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center font-mono text-sm font-semibold text-white uppercase border-2 border-background" data-testid={`avatar-${post.id}`}>
+                      {post.authorName
+                        .split(' ')
+                        .map((name: string) => name[0])
+                        .join('')}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      className="flex items-center gap-2 text-sm font-medium px-4 py-2 border border-border rounded-md bg-transparent text-muted-foreground cursor-pointer transition-all duration-200 relative overflow-hidden hover:border-primary hover:text-primary hover:-translate-y-0.5"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleTip(post);
+                      }}
+                      data-testid={`button-tip-${post.id}`}
+                    >
+                      ⚡ Support
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
