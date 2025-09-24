@@ -540,7 +540,7 @@ export default function SnapCameraView({
           </div>
         </Button>
         
-        {/* Center Section - Lens Name and Web3 Controls */}
+        {/* Center Section - Lens Name */}
         <div className="flex items-center gap-3">
           {/* Lens Name */}
           {currentLens && (
@@ -548,7 +548,10 @@ export default function SnapCameraView({
               <span className="text-white text-sm font-medium">{currentLens.name}</span>
             </div>
           )}
-          
+        </div>
+        
+        {/* Right Section - Web3 Controls and Help */}
+        <div className="flex items-center gap-3">
           {/* Balance Display when authenticated */}
           {isAuthenticated && (
             <BalanceDisplay
@@ -589,25 +592,26 @@ export default function SnapCameraView({
                 <Button
                   onClick={connectWallet}
                   className="px-3 py-1 text-xs bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/80 transition-colors"
+                  data-testid="connect-wallet-button"
                 >
                   Connect Wallet
                 </Button>
               )}
             </div>
           )}
+          
+          {/* Help Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/20"
+            onClick={() => setShowLensInfo(!showLensInfo)}
+          >
+            <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
+              <span className="text-white text-sm font-bold">?</span>
+            </div>
+          </Button>
         </div>
-        
-        {/* Help Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-white/20"
-          onClick={() => setShowLensInfo(!showLensInfo)}
-        >
-          <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
-            <span className="text-white text-sm font-bold">?</span>
-          </div>
-        </Button>
       </div>
       
       {/* Bottom Controls - Lens Selector */}
@@ -717,8 +721,6 @@ export default function SnapCameraView({
           <Repeat className="h-5 w-5" />
         </Button>
       </div>
-      
-
     </div>
   );
 }
