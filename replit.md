@@ -2,72 +2,22 @@
 
 This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
 
-## Recent Changes (August 17, 2025)
-- **REWARD DISTRIBUTION SYSTEM**: Implemented comprehensive CDP-based weekly reward system
-  - Added lens interaction tracking (apply, capture, share, download) with weighted scoring
-  - Created PostgreSQL schema for interactions, distributions, and creator rewards
-  - Built reward calculation engine with weighted distribution based on creator engagement
-  - Integrated CDP (Coinbase Developer Platform) for automated USDC reward payments
-  - Added interaction tracking to camera component for all lens activities
-  - Created admin dashboard for viewing and managing reward distributions
-  - Implemented APIs for interaction tracking, reward distribution, and status monitoring
-  - Weekly reward pool of $1000 USDC distributed based on weighted creator interactions
-- **SQUIDROUTER BRIDGE INTEGRATION**: Added cross-chain token bridging from Saga to Base
-  - Integrated @0xsquid/sdk for seamless cross-chain token bridging functionality
-  - Created SquidBridge service for bridging LENZ tokens from Saga chainlet to Base USDC
-  - Built comprehensive BridgeModal component with fee estimation and progress tracking
-  - Added bridge transaction status monitoring with real-time progress updates
-  - Implemented bridge APIs for route calculation, fee estimation, and status checking
-  - Enhanced dashboard with bridge functionality replacing swap button
-  - Enables users to move LENZ tokens to Base chain for CDP reward distributions
-- **WEB3 INTEGRATION**: Added MiniKit (OnchainKit) for Web3 functionality
-  - Installed @coinbase/onchainkit package for Farcaster and blockchain integration
-  - Created MiniKitProvider wrapper for Web3 wallet connectivity
-  - Integrated useMiniKit hook for frame initialization
-  - Added NFT minting button that opens Zora.co with clipboard image copy
-  - Added Farcaster share button using useComposeCast hook
-  - Both features copy captured photos to clipboard for easy sharing
-  - Configured Base chain integration for optimal Web3 performance
-- **MINIKIT ENVIRONMENT SETUP**: Configured required environment variables and manifest
-  - Added comprehensive .env.local with all MiniKit required variables
-  - Created dynamic manifest.json API route (/manifest) for Farcaster app registration
-  - Updated metadata with Open Graph and Twitter card support
-  - Configured proper environment variable fallbacks in MiniKitProvider
-  - Set up placeholder values for Farcaster credentials (HEADER, PAYLOAD, SIGNATURE)
-- **LENZ CHAINLET WALLET INTEGRATION**: Added dedicated LenZ chainlet wallet system
-  - Created LenzWalletProvider with ethers.js integration for custom Saga chainlet
-  - Built LenzWalletModal and LenzWalletButton components for wallet management
-  - Integrated wallet creation, import, and balance checking on LenZ chainlet
-  - Added LenzNftMinter component for direct NFT minting on LenZ chain
-  - Configured chainlet details: ID, RPC endpoints, native LENZ token support
-  - Positioned as secondary wallet option alongside Base app's primary wallet
-- **DASHBOARD PAGE CREATION**: Built comprehensive wallet and lens management dashboard
-  - Implemented gradient background design (990022 to 220099) as requested
-  - Added Phosphor Icons for consistent iconography throughout interface
-  - Created dual-tab layout for Tokens and My Lenses management
-  - Integrated with LenZ wallet balance display and transaction functionality
-  - Connected profile button navigation from camera to dashboard page
-  - **WALLET-GATED DASHBOARD**: Moved LenZ wallet creation to dashboard entry point
-  - Users must create LenZ wallet before accessing dashboard features
-  - Dashboard displays actual LENZ token balance from user's chainlet wallet
-  - Removed wallet button from camera interface to centralize wallet management
-- **MAJOR MIGRATION**: Successfully converted from Express+Vite hybrid architecture to pure Next.js App Router
-  - Removed all Express server dependencies and files (server/ directory)
-  - Migrated all Express API routes to Next.js API routes (app/api/)
-  - Updated storage layer to work with Next.js serverless functions
-  - Fixed deployment issues by eliminating Express import errors
-  - Preserved all camera functionality and UI design during migration
-- **DEPLOYMENT FIXES**: Resolved Next.js 15 compatibility issues for production deployment
-  - Fixed TypeScript compilation error in API routes by updating params type to Promise
-  - Removed legacy vite.config.ts file that was causing build conflicts
-  - Successfully completed production build with all optimizations
-- Fixed lens application issues by using correct Camera Kit API (`loadLens` instead of `getLens`)
-- Restored original Snapchat-like UI design with:
-  - Profile icon (top left), lens name (top center), help icon (top right)
-  - Swipeable lens carousel at bottom with center lens as capture button
-  - Post-capture polaroid-style photo frame with social sharing
-  - Twitter sharing with "Captured using @lenzdotdev" text
-  - Download functionality with proper 9:16 aspect ratio
+## Recent Changes (September 24, 2025)
+- **COMPLETE WEB3 REMOVAL**: Removed all blockchain and web3 functionality from the application
+  - Removed all web3 libraries (@coinbase/onchainkit, ethers, @0xsquid/sdk, etc.)
+  - Eliminated wallet providers (LenzWalletProvider, MiniKitProvider)
+  - Removed blockchain components (BridgeModal, LenzWalletModal, NFT minting)
+  - Cleaned up database schema by removing web3-related tables
+  - Removed reward distribution system and CDP integration
+  - Removed Farcaster integration and social features
+  - Removed cross-chain bridging functionality
+  - Simplified dashboard to show app statistics instead of wallet data
+- **CORE FUNCTIONALITY PRESERVED**: Maintained all essential AR camera features
+  - Snapchat Camera Kit integration remains intact
+  - Lens selection and application functionality preserved
+  - Photo capture and download capabilities maintained
+  - Social sharing through standard Web Share API and Twitter intents
+  - Profile navigation and app dashboard preserved (now web3-free)
 
 # User Preferences
 
@@ -138,7 +88,6 @@ RESTful endpoints following standard conventions:
 
 ## Core Dependencies
 - **@snap/camera-kit**: Snapchat's official SDK for AR lens integration and camera functionality
-- **@coinbase/onchainkit**: MiniKit framework for Web3 integration, Farcaster connectivity, and blockchain features
 - **@neondatabase/serverless**: PostgreSQL driver optimized for serverless environments
 - **drizzle-orm**: Type-safe ORM for database operations with PostgreSQL support
 
@@ -146,7 +95,7 @@ RESTful endpoints following standard conventions:
 - **@radix-ui/***: Comprehensive set of accessible UI components (dialogs, buttons, forms, etc.)
 - **tailwindcss**: Utility-first CSS framework with custom design tokens
 - **class-variance-authority**: Type-safe variant handling for component styling
-- **@phosphor-icons/react**: Primary icon library for consistent iconography (required throughout the interface)
+- **lucide-react**: Primary icon library for consistent iconography
 
 ## State & Data Management
 - **@tanstack/react-query**: Server state management with caching and synchronization
@@ -155,20 +104,13 @@ RESTful endpoints following standard conventions:
 - **zod**: Runtime type validation for API requests and responses
 
 ## Development Tools
-- **vite**: Fast build tool with hot module replacement
 - **typescript**: Static type checking across the entire stack
-- **wouter**: Lightweight routing library for React
 - **framer-motion**: Animation library for smooth UI transitions (used in camera interface)
 
 ## Platform Integration
-The application requires API credentials for both Snap and Coinbase platforms:
+The application requires API credentials for Snap Camera Kit:
 
 ### Snap Camera Kit
 - **SNAP_API_TOKEN**: Authentication token for Snap Camera Kit
 - **SNAP_GROUP_ID**: Group identifier for lens organization
 - Specific lens IDs for individual AR effects
-
-### Coinbase MiniKit (Web3)
-- **NEXT_PUBLIC_CDP_CLIENT_API_KEY**: Coinbase Developer Platform API key for Web3 functionality
-- Enables Farcaster connectivity, NFT minting, and blockchain transactions
-- Configured for Base chain integration
