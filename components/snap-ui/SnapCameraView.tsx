@@ -560,6 +560,38 @@ export default function SnapCameraView({
             />
           )}
           
+          {/* Support/Authentication Button */}
+          {handleSupport && currentLens && (
+            <Button
+              size="sm"
+              className={`px-3 py-2 text-xs rounded-full transition-all duration-200 ${
+                !account
+                  ? 'bg-blue-600 hover:bg-blue-500 text-white border border-blue-500'
+                  : !isAuthenticated
+                  ? 'bg-yellow-600 hover:bg-yellow-500 text-white border border-yellow-500'
+                  : 'bg-green-600 hover:bg-green-500 text-white border border-green-500'
+              }`}
+              disabled={isTransferring || (!account && !connectWallet)}
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (!account && connectWallet) {
+                  await connectWallet();
+                } else if (account && isAuthenticated && currentLens && handleSupport) {
+                  // Find the lens creator's wallet address
+                  const creator = users.find(user => user.name === currentLens.creator);
+                  if (creator && creator.walletAddress) {
+                    await handleSupport(creator.walletAddress, '0.01');
+                  } else {
+                    console.error('Creator wallet address not found for lens:', currentLens.name);
+                  }
+                }
+              }}
+              data-testid="button-support-creator"
+            >
+              ⚡ {!account ? 'Connect' : !isAuthenticated ? 'Authenticating...' : isTransferring ? 'Sending...' : '0.01 USDC'}
+            </Button>
+          )}
+          
           {/* WebSocket status */}
           {wsStatus && (
             <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
@@ -651,33 +683,6 @@ export default function SnapCameraView({
                   )}
                 </Button>
                 
-                {/* Support Button for non-center lenses */}
-                {offset !== 0 && lens && handleSupport && (
-                  <Button
-                    size="sm"
-                    className={`px-2 py-1 text-xs rounded-full transition-all duration-200 ${
-                      !account || !isAuthenticated
-                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600'
-                        : 'bg-green-600 hover:bg-green-500 text-white border border-green-500'
-                    }`}
-                    disabled={!account || !isAuthenticated || isTransferring}
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      if (lens && handleSupport) {
-                        // Find the lens creator's wallet address
-                        const creator = users.find(user => user.name === lens.creator);
-                        if (creator && creator.walletAddress) {
-                          await handleSupport(creator.walletAddress, '0.01');
-                        } else {
-                          console.error('Creator wallet address not found for lens:', lens.name);
-                        }
-                      }
-                    }}
-                    data-testid={`button-support-${lens.id}`}
-                  >
-                    ⚡ {!account ? 'Connect' : !isAuthenticated ? 'Auth...' : isTransferring ? 'Sending...' : '0.01 USDC'}
-                  </Button>
-                )}
               </motion.div>
             ))}
           </div>
