@@ -10,10 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Camera, Repeat, Download, Info, X, ChevronUp, User as UserIcon, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMiniKit, useComposeCast } from '@coinbase/onchainkit/minikit';
-import { LenzWalletButton } from '../lenz-wallet/LenzWalletButton';
-import { useInteractionTracking } from '../../hooks/useInteractionTracking';
-import { LenzNftMinter } from '../lenz-wallet/LenzNftMinter';
 
 interface SnapCameraViewProps {
   defaultLensId?: string;
@@ -30,9 +26,6 @@ export default function SnapCameraView({
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { isFrameReady } = useMiniKit();
-  const { composeCast } = useComposeCast();
-  const { trackInteraction } = useInteractionTracking();
   
   // State
   const [isCameraReady, setIsCameraReady] = useState(false);
@@ -120,16 +113,6 @@ export default function SnapCameraView({
       applyLensToCanvas(canvasRef.current, currentLens.snapLensId, currentLens.snapGroupId)
         .then(() => {
           console.log('Successfully applied lens:', currentLens.name);
-          // Track lens application interaction
-          trackInteraction({
-            lensId: currentLens.id,
-            interactionType: 'apply',
-            metadata: JSON.stringify({
-              lensName: currentLens.name,
-              creator: currentLens.creator,
-              facingMode
-            })
-          });
         })
         .catch((error) => {
           console.error('Failed to apply lens:', error);
@@ -176,19 +159,6 @@ export default function SnapCameraView({
       const dataUrl = await captureCanvas(canvasRef.current, facingMode);
       setCapturedPhoto(dataUrl);
       
-      // Track photo capture interaction
-      if (currentLens) {
-        trackInteraction({
-          lensId: currentLens.id,
-          interactionType: 'capture',
-          metadata: JSON.stringify({
-            lensName: currentLens.name,
-            creator: currentLens.creator,
-            facingMode,
-            timestamp: new Date().toISOString()
-          })
-        });
-      }
     } catch (error) {
       console.error('Failed to capture photo:', error);
       toast({
@@ -264,18 +234,6 @@ export default function SnapCameraView({
         description: "Your photo has been saved to your device.",
       });
       
-      // Track download interaction
-      if (currentLens) {
-        trackInteraction({
-          lensId: currentLens.id,
-          interactionType: 'download',
-          metadata: JSON.stringify({
-            lensName: currentLens.name,
-            creator: currentLens.creator,
-            timestamp: new Date().toISOString()
-          })
-        });
-      }
     }
   };
 
@@ -317,94 +275,7 @@ export default function SnapCameraView({
     setCapturedPhoto(null);
   };
 
-  // Mint NFT function - Opens a new window for NFT minting
-  const handleMintNft = async () => {
-    if (!capturedPhoto || !isFrameReady) {
-      toast({
-        title: "Unable to mint NFT",
-        description: "Please ensure you have a captured photo and Web3 connection is ready.",
-        variant: "destructive"
-      });
-      return;
-    }
 
-    try {
-      // For now, we'll open an external NFT minting service
-      // In a production app, you would integrate with a specific NFT contract
-      const mintingUrl = `https://zora.co/create?ref=lenzdev`;
-      window.open(mintingUrl, '_blank');
-      
-      // Copy the image to clipboard for easy upload
-      const response = await fetch(capturedPhoto);
-      const blob = await response.blob();
-      const item = new ClipboardItem({ 'image/png': blob });
-      await navigator.clipboard.write([item]);
-
-      toast({
-        title: "Ready to Mint NFT!",
-        description: "Image copied to clipboard. Upload it on the minting page that just opened.",
-      });
-    } catch (error) {
-      console.error('Failed to prepare for NFT minting:', error);
-      toast({
-        title: "Preparation Failed",
-        description: "Failed to prepare for NFT minting. Please save the image manually.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  // Share to Farcaster function
-  const handleFarcasterShare = async () => {
-    if (!capturedPhoto || !isFrameReady) {
-      toast({
-        title: "Unable to share",
-        description: "Please ensure you have a captured photo and Web3 connection is ready.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      // Copy image to clipboard first
-      const response = await fetch(capturedPhoto);
-      const blob = await response.blob();
-      const item = new ClipboardItem({ 'image/png': blob });
-      await navigator.clipboard.write([item]);
-
-      // Use composeCast hook to create a Farcaster cast
-      await composeCast({
-        text: `Check out this AR photo I captured with ${currentLens?.name || 'LenZ'} lens using @lenzdotdev! 📸✨`,
-        embeds: [window.location.href]
-      });
-
-      toast({
-        title: "Shared to Farcaster!",
-        description: "Your photo has been shared to Farcaster with image copied to clipboard.",
-      });
-      
-      // Track share interaction
-      if (currentLens) {
-        trackInteraction({
-          lensId: currentLens.id,
-          interactionType: 'share',
-          metadata: JSON.stringify({
-            lensName: currentLens.name,
-            creator: currentLens.creator,
-            platform: 'farcaster',
-            timestamp: new Date().toISOString()
-          })
-        });
-      }
-    } catch (error) {
-      console.error('Failed to share to Farcaster:', error);
-      toast({
-        title: "Share Failed",
-        description: "Failed to share to Farcaster. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
 
   // Get visible lenses for carousel
   const getVisibleLenses = () => {
@@ -496,40 +367,6 @@ export default function SnapCameraView({
         <div className="absolute bottom-4 left-0 right-0 z-10 p-6">
           <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto">
             <div className="flex justify-center gap-4 flex-wrap">
-              {/* Zora NFT Mint Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-purple-500/20 w-12 h-12 border border-purple-400/30"
-                onClick={handleMintNft}
-                disabled={!isFrameReady}
-                title="Mint NFT on Zora"
-              >
-                <Sparkles className="h-6 w-6 text-purple-400" />
-              </Button>
-
-              {/* LenZ Chain NFT Mint Button */}
-              <LenzNftMinter 
-                imageUrl={capturedPhoto} 
-                metadata={{
-                  name: `LenZ AR Photo - ${currentLens?.name}`,
-                  description: `AR photo captured using ${currentLens?.name} lens on LenZ Camera`,
-                  lens: currentLens?.name
-                }}
-              />
-              
-              {/* Farcaster Share Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-blue-500/20 w-12 h-12 border border-blue-400/30"
-                onClick={handleFarcasterShare}
-                disabled={!isFrameReady}
-              >
-                <svg className="h-6 w-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 24C5.4 24 0 18.6 0 12S5.4 0 12 0s12 5.4 12 12-5.4 12-12 12zm0-2c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zm-4-8h8l-2-2H10l-2 2zm-2-2h12l-1.5-1.5H7.5L6 14z"/>
-                </svg>
-              </Button>
               {/* X/Twitter */}
               <Button
                 variant="ghost"
@@ -642,12 +479,6 @@ export default function SnapCameraView({
               </Button>
             </div>
             
-            {/* Web3 Status Indicator */}
-            {!isFrameReady && (
-              <div className="mt-3 text-center">
-                <p className="text-xs text-gray-400">Connecting to Web3...</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
