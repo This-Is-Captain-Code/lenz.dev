@@ -36,7 +36,7 @@ export function PostList({ posts }: PostListProps) {
         {posts.map((post, index) => (
           <article 
             key={post.id} 
-            className="relative bg-background border-2 border-border rounded-xl overflow-hidden transition-all duration-200 hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+            className="relative bg-background dark:bg-gray-900 border-2 border-border dark:border-gray-700 rounded-xl overflow-hidden transition-all duration-200 hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
             data-testid={`card-post-${post.id}`}
           >
             <a 

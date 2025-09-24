@@ -5,7 +5,7 @@ import { posts } from '../../lib/data/posts';
 
 export default function ContentPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="dark min-h-screen bg-background text-foreground" style={{ backgroundColor: 'hsl(20, 14.3%, 4.1%)', color: 'hsl(0, 0%, 95%)' }}>
       <div className="max-w-6xl mx-auto px-8">
         <header className="text-center py-16 border-b border-border relative">
           <div className="max-w-2xl mx-auto">
