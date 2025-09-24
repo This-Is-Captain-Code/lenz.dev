@@ -1,3 +1,6 @@
 {
+  "/api/lenses/route": "app/api/lenses/route.js",
+  "/api/user/route": "app/api/user/route.js",
+  "/manifest.json/route": "app/manifest.json/route.js",
   "/page": "app/page.js"
 }
