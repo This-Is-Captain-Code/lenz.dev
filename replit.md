@@ -3,21 +3,24 @@
 This is a full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, and capture photos with applied effects. It's built as a modern web application with Next.js App Router, featuring a mobile-first design with Snapchat-like interface including post-capture sharing functionality.
 
 ## Recent Changes (September 24, 2025)
-- **COMPLETE WEB3 REMOVAL**: Removed all blockchain and web3 functionality from the application
-  - Removed all web3 libraries (@coinbase/onchainkit, ethers, @0xsquid/sdk, etc.)
-  - Eliminated wallet providers (LenzWalletProvider, MiniKitProvider)
-  - Removed blockchain components (BridgeModal, LenzWalletModal, NFT minting)
-  - Cleaned up database schema by removing web3-related tables
-  - Removed reward distribution system and CDP integration
-  - Removed Farcaster integration and social features
-  - Removed cross-chain bridging functionality
-  - Simplified dashboard to show app statistics instead of wallet data
+- **NEW WEB3 INTEGRATION**: Added advanced Web3 functionality with instant microtransactions
+  - Integrated Nitrolite SDK (@erc7824/nitrolite) for state channel technology
+  - Added Viem for type-safe Ethereum interactions
+  - Implemented MetaMask wallet connection with EIP-712 authentication
+  - Created real-time WebSocket service for P2P communication
+  - Built instant USDC transfer system (0.01 USDC tips for content creators)
+  - Added session key management for secure state channel operations
+  - Created dedicated Web3 content platform at `/web3` route
+- **ENHANCED CONTENT PLATFORM**: Extended existing content features
+  - Maintained original content feed at `/content` route  
+  - Added Web3-enabled version with microtransaction support
+  - Integrated wallet-based authentication and balance tracking
+  - Real-time balance updates via WebSocket connections
 - **CORE FUNCTIONALITY PRESERVED**: Maintained all essential AR camera features
-  - Snapchat Camera Kit integration remains intact
+  - Snapchat Camera Kit integration remains intact at root route `/`
   - Lens selection and application functionality preserved
   - Photo capture and download capabilities maintained
   - Social sharing through standard Web Share API and Twitter intents
-  - Profile navigation and app dashboard preserved (now web3-free)
 
 # User Preferences
 
