@@ -1,5 +1,1 @@
-{
-  "/api/lenses/route": "app/api/lenses/route.js",
-  "/api/user/route": "app/api/user/route.js",
-  "/page": "app/page.js"
-}
+{}
