@@ -2,98 +2,33 @@
 
 A full-stack web application that integrates Snapchat's Camera Kit to create a lens-based photo experience with advanced Web3 functionality. The app allows users to apply augmented reality (AR) lenses to their camera feed, browse available lenses, capture photos with applied effects, and perform instant microtransactions using state channel technology.
 
-## 🚀 Tech Stack
+## 🚀 Core Tech Stack
 
-### **Frontend Framework & Core Technologies**
-- **[Next.js 15.4+](https://nextjs.org/)** - React framework with App Router for modern full-stack development
-- **[React 18.3+](https://react.dev/)** - Frontend library for building user interfaces
-- **[TypeScript 5](https://www.typescriptlang.org/)** - Static type checking across the entire stack
-- **[Tailwind CSS 3.4+](https://tailwindcss.com/)** - Utility-first CSS framework with custom design tokens
+### **Full-Stack Framework**
+- **[Next.js 15.4+](https://nextjs.org/)** - React framework with App Router and API routes
+- **[React 18.3+](https://react.dev/)** - Frontend library
+- **[TypeScript 5](https://www.typescriptlang.org/)** - Type safety across the stack
 
-### **UI Components & Design System**
-- **[Radix UI](https://www.radix-ui.com/)** - Comprehensive set of accessible UI components including:
-  - `@radix-ui/react-dialog` - Modal dialogs
-  - `@radix-ui/react-dropdown-menu` - Dropdown menus
-  - `@radix-ui/react-toast` - Notifications
-  - `@radix-ui/react-select` - Select components
-  - `@radix-ui/react-tabs` - Tab components
-  - `@radix-ui/react-progress` - Progress indicators
-  - `@radix-ui/react-avatar` - User avatars
-  - `@radix-ui/react-checkbox` - Checkboxes
-  - `@radix-ui/react-switch` - Toggle switches
-  - And many more accessible components
-- **[shadcn/ui](https://ui.shadcn.com/)** - Design system built on top of Radix UI
-- **[class-variance-authority](https://cva.style/)** - Type-safe variant handling for component styling
-- **[clsx](https://github.com/lukeed/clsx)** - Utility for constructing className strings
-- **[tailwind-merge](https://github.com/dcastil/tailwind-merge)** - Merge Tailwind CSS classes without style conflicts
+### **AR Camera Experience**
+- **[@snap/camera-kit](https://docs.snap.com/camera-kit)** - Snapchat's AR lens SDK for real-time camera effects
 
-### **Icons & Graphics**
-- **[Lucide React](https://lucide.dev/)** - Primary icon library for consistent iconography
-- **[React Icons](https://react-icons.github.io/react-icons/)** - Additional icon sets including company logos
-- **[Phosphor Icons](https://phosphoricons.com/)** - Alternative icon library
+### **Web3 Microtransactions**
+- **[@erc7824/nitrolite](https://nitrolite.org/)** - State channels for instant USDC payments
+- **[Viem](https://viem.sh/)** - Ethereum wallet interactions
+- **WebSocket** - Real-time P2P communication
 
-### **State Management & Data Fetching**
-- **[TanStack Query (React Query) 5.6+](https://tanstack.com/query)** - Server state management with caching and synchronization
-- **[Axios 1.11+](https://axios-http.com/)** - HTTP client for API requests
-- **[Zod 3.24+](https://zod.dev/)** - Runtime type validation for API requests and responses
-- **[zod-validation-error](https://github.com/causaly/zod-validation-error)** - Better error messages for Zod validation
-
-### **Forms & Validation**
-- **[React Hook Form 7.55+](https://react-hook-form.com/)** - Form handling with validation
-- **[@hookform/resolvers](https://github.com/react-hook-form/resolvers)** - Form validation resolvers for Zod integration
-- **[input-otp](https://input-otp.rodz.dev/)** - OTP input component
-
-### **Animation & UI Interactions**
-- **[Framer Motion 11.13+](https://www.framer.com/motion/)** - Animation library for smooth UI transitions
-- **[tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)** - Tailwind CSS animation utilities
-- **[tw-animate-css](https://github.com/ben-rogerson/twin.macro)** - Additional CSS animations
-- **[embla-carousel-react](https://www.embla-carousel.com/)** - Carousel component for lens selection
-
-### **AR & Camera Integration**
-- **[@snap/camera-kit 1.8+](https://docs.snap.com/camera-kit)** - Snapchat's official SDK for AR lens integration and camera functionality
-- **Canvas API** - For camera feed rendering and lens effects
-
-### **Web3 & Blockchain**
-- **[@erc7824/nitrolite 0.3+](https://nitrolite.org/)** - State channel technology for instant microtransactions
-- **[Viem 2.32+](https://viem.sh/)** - Type-safe Ethereum interactions
-- **WebSocket (ws 8.18+)** - Real-time P2P communication for Web3 features
-- **EIP-712** - Ethereum typed data signing standard for secure authentication
-
-### **Backend & Database**
-- **[Next.js API Routes](https://nextjs.org/docs/api-routes/introduction)** - Serverless backend functionality
+### **Database & Backend**
 - **[PostgreSQL](https://www.postgresql.org/)** - Primary database
-- **[Drizzle ORM 0.39+](https://orm.drizzle.team/)** - Type-safe ORM for database operations
-- **[drizzle-zod 0.7+](https://github.com/drizzle-team/drizzle-orm/tree/main/drizzle-zod)** - Zod schema generation from Drizzle models
-- **[@neondatabase/serverless 0.10+](https://neon.tech/)** - PostgreSQL driver optimized for serverless environments
+- **[Drizzle ORM](https://orm.drizzle.team/)** - Type-safe database operations
 
-### **Utility Libraries**
-- **[date-fns 3.6+](https://date-fns.org/)** - Date utility library
-- **[react-day-picker 8.10+](https://react-day-picker.js.org/)** - Date picker component
-- **[cmdk 1.1+](https://cmdk.paco.me/)** - Command menu component
-- **[vaul 1.1+](https://vaul.emilkowal.ski/)** - Drawer component
-- **[react-resizable-panels 2.1+](https://github.com/bvaughn/react-resizable-panels)** - Resizable panel layouts
+### **UI & Styling**
+- **[Radix UI](https://www.radix-ui.com/)** + **[shadcn/ui](https://ui.shadcn.com/)** - Accessible component library
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first styling
+- **[Framer Motion](https://www.framer.com/motion/)** - Smooth animations
 
-### **Theming & Styling**
-- **[next-themes 0.4+](https://github.com/pacocoursey/next-themes)** - Theme switching (light/dark mode)
-- **[@tailwindcss/typography 0.5+](https://tailwindcss.com/docs/typography-plugin)** - Typography plugin for Tailwind CSS
-- **PostCSS 8.4+** - CSS processing
-- **Autoprefixer 10.4+** - CSS vendor prefixing
-
-### **Data Visualization**
-- **[Recharts 2.15+](https://recharts.org/)** - Chart library for data visualization
-
-### **Development Tools**
-- **[ESLint 8](https://eslint.org/)** - Code linting
-- **[eslint-config-next](https://nextjs.org/docs/basic-features/eslint)** - Next.js ESLint configuration
-- **[Drizzle Kit 0.30+](https://orm.drizzle.team/kit-docs/overview)** - Database migration and management tool
-- **[@types/node](https://www.npmjs.com/package/@types/node)** - Node.js TypeScript definitions
-- **[@types/react](https://www.npmjs.com/package/@types/react)** - React TypeScript definitions
-- **[@types/react-dom](https://www.npmjs.com/package/@types/react-dom)** - React DOM TypeScript definitions
-- **[@types/ws](https://www.npmjs.com/package/@types/ws)** - WebSocket TypeScript definitions
-
-### **Logging & Monitoring**
-- **[pino-pretty 13.1+](https://github.com/pinojs/pino-pretty)** - Pretty printing for Pino logs
-- **[@jridgewell/trace-mapping 0.3+](https://github.com/jridgewell/trace-mapping)** - Source map utilities
+### **State Management**
+- **[TanStack Query](https://tanstack.com/query)** - Server state and caching
+- **[React Hook Form](https://react-hook-form.com/)** + **[Zod](https://zod.dev/)** - Form handling and validation
 
 ## 🏗️ Architecture
 
