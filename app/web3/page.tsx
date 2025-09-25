@@ -324,8 +324,8 @@ export default function Web3Page() {
             {/* Balance display when authenticated */}
             {isAuthenticated && (
               <BalanceDisplay
-                balance={isLoadingBalances ? 'Loading...' : (balances?.['usdc'] ?? null)}
-                symbol="USDC"
+                balance={isLoadingBalances ? 'Loading...' : (balances?.['ytest.usd'] ?? null)}
+                symbol="YTEST.USD"
               />
             )}
             

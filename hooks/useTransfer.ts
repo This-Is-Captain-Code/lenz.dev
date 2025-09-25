@@ -11,7 +11,7 @@ export interface TransferResult {
 
 export const useTransfer = (sessionKey: SessionKey | null, isAuthenticated: boolean) => {
   const handleTransfer = useCallback(
-    async (recipient: Address, amount: string, asset: string = 'usdc'): Promise<TransferResult> => {
+    async (recipient: Address, amount: string, asset: string = 'ytest.usd'): Promise<TransferResult> => {
       if (!isAuthenticated || !sessionKey) {
         return { success: false, error: 'Please authenticate first' };
       }
