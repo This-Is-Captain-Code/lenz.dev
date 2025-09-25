@@ -29,7 +29,7 @@ export function Web3PostList({
       return;
     }
 
-    console.log(`Supporting ${post.authorName} with 0.01 USDC`);
+    console.log(`Supporting ${post.authorName} with 0.01 YTEST.USD`);
     await onTransfer(author.walletAddress, '0.01');
   };
 
@@ -55,7 +55,7 @@ export function Web3PostList({
     if (!isWalletConnected) return 'Connect Wallet';
     if (!isAuthenticated) return 'Authenticating...';
     if (isTransferring) return 'Supporting...';
-    return 'Support 0.01 USDC';
+    return 'Support 0.01 YTEST.USD';
   };
 
   const isButtonDisabled = !isWalletConnected || !isAuthenticated || isTransferring;
