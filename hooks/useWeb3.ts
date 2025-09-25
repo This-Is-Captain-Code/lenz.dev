@@ -76,7 +76,7 @@ export function useWeb3() {
     }
 
     webSocketService.addStatusListener(setWsStatus);
-    webSocketService.connect();
+    // Don't auto-connect - wait for wallet connection
 
     return () => {
       webSocketService.removeStatusListener(setWsStatus);
@@ -284,6 +284,10 @@ export function useWeb3() {
 
       setWalletClient(walletClient);
       setAccount(address);
+
+      // Connect to the specific RPC endpoint after wallet connection
+      console.log('Wallet connected, switching to clearnet-sandbox RPC...');
+      webSocketService.connect('wss://clearnet-sandbox.yellow.com/ws');
     } catch (error) {
       console.error('Wallet connection failed:', error);
       alert('Failed to connect wallet. Please try again.');

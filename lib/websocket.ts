@@ -10,13 +10,13 @@ class WebSocketService {
   private messageListeners: Set<MessageListener> = new Set();
   private messageQueue: string[] = [];
 
-  public connect() {
+  public connect(url?: string) {
     if (this.socket && this.socket.readyState < 2) return;
 
-    const wsUrl = process.env.NEXT_PUBLIC_NITROLITE_WS_URL;
+    const wsUrl = url || process.env.NEXT_PUBLIC_NITROLITE_WS_URL;
 
     if (!wsUrl) {
-      console.error('NEXT_PUBLIC_NITROLITE_WS_URL is not set');
+      console.error('No WebSocket URL provided and NEXT_PUBLIC_NITROLITE_WS_URL is not set');
       this.updateStatus('Disconnected');
       return;
     }
